@@ -2,14 +2,12 @@ package it.polimi.tiw.project.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,12 +17,14 @@ import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import it.polimi.tiw.project.utilities.ConnectionHandler;
 import it.polimi.tiw.project.DAO.MeetingDAO;
 import it.polimi.tiw.project.DAO.UserDAO;
 import it.polimi.tiw.project.beans.Meeting;
 import it.polimi.tiw.project.beans.User;
 
 @WebServlet("/GoToHomepage")
+@MultipartConfig
 public class GoToHomepage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
@@ -36,20 +36,7 @@ public class GoToHomepage extends HttpServlet {
 
 	
 	public void init() throws ServletException {
-		try {
-			ServletContext servletContext = getServletContext();	
-			String driver = servletContext.getInitParameter("dbDriver");
-			String url = servletContext.getInitParameter("dbUrl");
-			String user = servletContext.getInitParameter("dbUser");
-			String password = servletContext.getInitParameter("dbPassword");
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url, user, password);
-
-		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
-		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
-		}
+		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 	
 	
@@ -117,10 +104,9 @@ public class GoToHomepage extends HttpServlet {
 	
 	public void destroy() {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException sqle) {
+			ConnectionHandler.closeConnection(connection);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
