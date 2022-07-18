@@ -56,7 +56,7 @@ public class MeetingForm {
 		this.title = title;
 		if (title == null || title.isEmpty()) {
 			this.titleError = "A title must be inserted.";
-		} else if ( !title.matches("(?=[^A-Za-z]*[a-zA-Z])[a-zA-Z\\s]") ){
+		} else if ( !title.matches("[a-zA-Z]+") ){
 			this.titleError = "The title can only contain letters and spaces.";
 		} else {
 			this.titleError = null;
