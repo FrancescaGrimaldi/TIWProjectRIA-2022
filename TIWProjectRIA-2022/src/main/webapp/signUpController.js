@@ -27,9 +27,9 @@
 						}
 					}
 				}, false);
-				document.getElementById("genericErrors").textContent = "";
+				document.getElementById("passwordError").textContent = "";
 			} else {
-				document.getElementById("genericErrors").textContent = "Passwords have to match."
+				document.getElementById("passwordError").textContent = "Passwords do no match."
 			}
 		} else {
 			form.reportValidity();
@@ -52,7 +52,7 @@
 		var pass2 = this.value;
 		
 		if (pass1 != pass2) {
-			document.getElementById("passwordError").textContent = "Password have to match."
+			document.getElementById("passwordError").textContent = "Password do not match."
 		} else {
 			document.getElementById("passwordError").textContent = ""
 		}
