@@ -39,10 +39,22 @@
 
 	document.querySelector("input[name='email']").addEventListener("blur", function(e) {
 		var mail = this.value
+		
 		if (!mail.includes(".") || !mail.includes("@")) {
-			document.getElementById("genericErrors").textContent = "Email format is example@mail.com."
+			document.getElementById("emailError").textContent = "Email format is example@mail.com."
 		} else {
-			document.getElementById("genericErrors").textContent = ""
+			document.getElementById("emailError").textContent = ""
+		}
+	})
+	
+	document.querySelector("input[name='password2']").addEventListener("blur", function(e) {
+		var pass1 = document.querySelector("input[name='password']").value;
+		var pass2 = this.value;
+		
+		if (pass1 != pass2) {
+			document.getElementById("passwordError").textContent = "Password have to match."
+		} else {
+			document.getElementById("passwordError").textContent = ""
 		}
 	})
 

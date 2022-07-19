@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Home</title>
+	<link rel="stylesheet" type="text/css" media="all" 	href="../CSS/mystyle.css"/>
+	<script src="homepageController.js" charset="utf-8" defer></script>
+	<script src="utils.js" charset="utf-8" defer></script>
+</head>
+
+<body>
+	<div align="right">
+		<form method="POST" action="Logout">
+			<button type="submit">Logout</button>
+		</form>
+	</div>
+	<h1>Welcome to your home page!</h1>
+	<p class="welcome" id="welcomeMessaage"> </p>
+
+	<h2>Meetings created:</h2>
+	<div th:if="${CreatedMeetings.size()>0}">
+		<table>
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Date</th>
+					<th>Time</th>
+					<th>Duration</th>
+					<th>Maximum number of participants</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="m : ${CreatedMeetings}">
+					<td th:text="${m.title}"></td>
+					<td th:text="${m.date}"></td>
+					<td th:text="${m.time}"></td>
+					<td th:text="${m.duration}"></td>
+					<td th:text="${m.maxPart}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div th:if="${CreatedMeetings.size() == 0}">You haven't created
+		any meetings!</div>
+		
+		
+	<h2>Meetings you are invited to:</h2>
+	<div th:if="${InvitedMeetings.size()>0}">
+		<table>
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Date</th>
+					<th>Time</th>
+					<th>Duration</th>
+					<th>Max participants</th>
+					<th>Creator</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="m : ${InvitedMeetings}">
+					<td th:text="${m.title}"></td>
+					<td th:text="${m.date}"></td>
+					<td th:text="${m.time}"></td>
+					<td th:text="${m.duration}"></td>
+					<td th:text="${m.maxPart}"></td>
+					<td th:text="${m.creatorUsername}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div th:if="${InvitedMeetings.size()==0}">You don't have any
+		meeting invitation.</div>
+	
+	
+	<div>
+		<h2>Complete the form to create a meeting</h2>
+		<form action="#">
+			<fieldset>
+				<p>
+					Title: <input type="text" name="title" required />
+				</p>
+				<p>
+					Date: <input type="date" name="date"
+						th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+						placeholder="yyyy-MM-dd" required />
+				</p>
+				<p>
+					Time: <input type="time" name="time" placeholder="hh:mm" required />
+				</p>
+				<p>
+					Duration (in minutes): <input type="number" name="duration" min=1
+						required />
+				</p>
+				<p>
+					Maximum number of participants: <input type="number" name="maxPart"
+						min=1 required />
+				</p>
+
+				<input type="submit" name="Create Meeting" id="createMeetingButton">
+			</fieldset>
+		</form>
+		
+		<p class="error" id="genericMeetingError"> </p>
+		
+	</div>
+	
+</body>
+</html>
