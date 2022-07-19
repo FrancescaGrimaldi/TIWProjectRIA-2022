@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import it.polimi.tiw.project.DAO.UserDAO;
 import it.polimi.tiw.project.beans.User;
 import it.polimi.tiw.project.utilities.ConnectionHandler;
@@ -21,35 +25,31 @@ import it.polimi.tiw.project.utilities.ConnectionHandler;
 public class CheckLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
-	
-	
+
 	public CheckLogin() {
 		super();
 	}
 
-	
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
-	
-	
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doPost(request, response);
 	}
 
-	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		// obtain and escape params
 		String usrn = null;
 		String pwd = null;
-		
+
 		try {
 			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
 			pwd = StringEscapeUtils.escapeJava(request.getParameter("password"));
-			
+
 			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
 				throw new Exception("Missing or empty credential value");
 			}
@@ -64,7 +64,7 @@ public class CheckLogin extends HttpServlet {
 		// query db to authenticate for user
 		UserDAO uDAO = new UserDAO(connection);
 		User u = null;
-		
+
 		try {
 			u = uDAO.checkCredentials(usrn, pwd);
 		} catch (SQLException e) {
@@ -72,7 +72,7 @@ public class CheckLogin extends HttpServlet {
 			return;
 		}
 
-		// If the user exists, add info to the session and go to home page, 
+		// If the user exists, add info to the session and go to home page,
 		// otherwise show login page with error message
 		if (u == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -80,15 +80,14 @@ public class CheckLogin extends HttpServlet {
 		} else {
 			request.getSession().setAttribute("user", u);
 			request.getSession().setAttribute("user.username", u.getUsername());
-			response.setStatus(HttpServletResponse.SC_OK);
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write(usrn); // or println(usrn) ?
+			response.getWriter().write(usrn);
+			response.setStatus(HttpServletResponse.SC_OK);
 		}
 
 	}
-	
-	
+
 	public void destroy() {
 		try {
 			ConnectionHandler.closeConnection(connection);
@@ -96,5 +95,5 @@ public class CheckLogin extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

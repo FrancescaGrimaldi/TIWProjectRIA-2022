@@ -13,7 +13,7 @@
                         var message = x.responseText;
                         switch (x.status) {
                             case 200:
-                                sessionStorage.setItem('username', message); //mette username nella sessione
+                                sessionStorage.setItem('username', message); //mette user nella sessione
                                 window.location.href = "Homepage.html";
                                 break;
                             case 400: // bad request
