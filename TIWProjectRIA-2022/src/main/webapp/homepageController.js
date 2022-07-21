@@ -203,7 +203,9 @@
 		}
 	}
 
-	function minDate() {
+	function setMinDate(_place) {
+		this.place = _place;
+		
 		var today = new Date();
 		var dd = today.getDate();
 		var mm = today.getMonth() + 1; //January is 0
@@ -217,8 +219,11 @@
 		}
 
 		today = yyyy + '-' + mm + '-' + dd;
-		document.getElementById("datefield").setAttribute("min", today);
+		this.place.setAttribute("min", today);
 	}
+	
+	document.querySelector("input[name='date']").addEventListener("blur", setMinDate(document.getElementById("datefield")));
+	
 
 	function PageOrchestrator() {
 
@@ -246,7 +251,7 @@
 				document.getElementById("invitedMeetingArea")
 			);
 			invitedMeeting.show();
-
+			
 			//↓ ↓ ↓ ↓ ↓ ↓ ↓   TO ADAPT OR DELETE   ↓ ↓ ↓ ↓ ↓ ↓ ↓
 			/* register folder_form wizard
 			wizard = new Wizard(document.getElementById("create-content"));
