@@ -6,31 +6,26 @@
 		e.preventDefault();
 		var form = e.target.closest("form");
 		if (form.checkValidity()) {
-			if (document.querySelector("input[name=password]").value == document.querySelector("input[name=password2]").value) {
-				makeCall("POST", "CreateUser", e.target.closest("form"), function(x) {
-					if (x.readyState == XMLHttpRequest.DONE) {
-						var message = x.responseText;
-						switch (x.status) {
-							case 200:
-								sessionStorage.setItem("regSuccessful", "REGISTRATION SUCCESSFUL! You can now log in");
-								window.location.href = "index.html";
-								break;
-							case 400: // bad request
-								document.getElementById("genericErrors").textContent = message;
-								break;
-							case 406: // username already in use
-								document.getElementById("error").textContent = message;
-								break;
-							case 502: // server error
-								alert(message);
-								break;
-						}
+			makeCall("POST", "CreateUser", e.target.closest("form"), function(x) {
+				if (x.readyState == XMLHttpRequest.DONE) {
+					var message = x.responseText;
+					switch (x.status) {
+						case 200:
+							sessionStorage.setItem("regSuccessful", "REGISTRATION SUCCESSFUL! You can now log in");
+							window.location.href = "index.html";
+							break;
+						case 400: // bad request
+							document.getElementById("genericErrors").textContent = message;
+							break;
+						case 406: // username already in use
+							document.getElementById("error").textContent = message;
+							break;
+						case 502: // server error
+							alert(message);
+							break;
 					}
-				}, false);
-				document.getElementById("passwordError").textContent = "";
-			} else {
-				document.getElementById("passwordError").textContent = "Passwords do no match."
-			}
+				}
+			}, false);
 		} else {
 			form.reportValidity();
 		}
@@ -52,7 +47,7 @@
 		var pass2 = this.value;
 		
 		if (pass1 != pass2) {
-			document.getElementById("passwordError").textContent = "Password do not match."
+			document.getElementById("passwordError").textContent = "Passwords do not match."
 		} else {
 			document.getElementById("passwordError").textContent = ""
 		}

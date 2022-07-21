@@ -7,7 +7,7 @@
 	let pageOrchestrator = new PageOrchestrator();
 
 	window.addEventListener("load", () => {
-		if (sessionStorage.getItem('username') == null) {
+		if (sessionStorage.getItem("username") == null) {
 			window.location.href = "index.html";
 		} else {
 			pageOrchestrator.start(); // initialize the components
@@ -17,7 +17,7 @@
 
 
 	function WelcomeMessage(_username, messagecontainer) {
-		this.username = username;
+		this.username = _username;
 		this.show = function() {
 			messagecontainer.textContent = this.username;
 		}
@@ -194,12 +194,12 @@
 
 		this.start = function() {
 			// init welcome message
-			welcomeMessage = new WelcomeMessage(sessionStorage.getItem('user.name'), sessionStorage.getItem('user.surname'), document.getElementById("welcomeMessage"));
+			welcomeMessage = new WelcomeMessage(sessionStorage.getItem("username"), document.getElementById("welcomeMessage"));
 			welcomeMessage.show();
 
 			// handles logout
 			document.getElementById("logoutButton").addEventListener('click', () => {
-				window.sessionStorage.removeItem('user');
+				window.sessionStorage.removeItem("username");
 			})
 
 			// init created meeting table
@@ -215,9 +215,6 @@
 			// register folder_form wizard
 			wizard = new Wizard(document.getElementById("create-content"));
 
-			document.querySelector("a[href='LogOut']").addEventListener('click', () => {
-				sessionStorage.removeItem('username');
-			});
 		};
 
 		this.refresh = function() {

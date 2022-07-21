@@ -52,17 +52,13 @@ public class CreateUser extends HttpServlet {
 		String city = request.getParameter("city");
 		
 		UserForm userF = new UserForm(email, username, password, password2, name, surname, age, city);
-		
-		//boolean regSuccessful = false;
-		//trying to figure how to use this
-		
+
 		//the first half is done
 		if (userF.isValid()) {
 			if (this.checkUsername(username)) {
 				try {
 					UserDAO uDAO = new UserDAO(connection);
 					uDAO.createUser(email, username, name, surname, password, age, city);
-					// regSuccessful = true;
 					response.setStatus(HttpServletResponse.SC_OK);
 					return; //don't know if it's necessary
 				} catch(SQLException e3) {
@@ -72,7 +68,6 @@ public class CreateUser extends HttpServlet {
 				}
 			} else {
 				//the form is correct but the username is already taken
-				
 				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
 				response.getWriter().println("Username already in use");
 				return;

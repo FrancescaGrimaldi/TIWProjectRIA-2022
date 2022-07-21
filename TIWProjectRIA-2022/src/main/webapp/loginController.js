@@ -13,7 +13,7 @@
                         var message = x.responseText;
                         switch (x.status) {
                             case 200:
-                                sessionStorage.setItem('username', message); //mette user nella sessione
+                                sessionStorage.setItem("username", message); //mette username nella sessione
                                 window.location.href = "Homepage.html";
                                 break;
                             case 400: // bad request
@@ -33,15 +33,14 @@
             form.reportValidity();
         }
     });
-    
-    /**
-     window.onload = () => {
-        var x = sessionStorage.getItem("regSuccessful");
-        if(x!=undefined){
-            sessionStorage.removeItem("regSuccessful");
-            document.getElementsByClassName("registration")[0].textContent = x;
-        }
-    }
-    */
-    
+
+	window.onload = () => {
+		var x = sessionStorage.getItem("regSuccessful");
+		if (x != null) {
+			sessionStorage.removeItem("regSuccessful");
+			document.getElementById("registration").textContent = x;
+		}
+	}
+
+
 })();
