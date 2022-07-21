@@ -66,13 +66,14 @@ public class GetCreatedMeetings extends HttpServlet {
 		}
 
 		// Refresh and add meetings to the parameters
-		// confused about this
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         String cMeetingsJson = gson.toJson(cMeetings);
 
 		response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(cMeetingsJson);
+		
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	

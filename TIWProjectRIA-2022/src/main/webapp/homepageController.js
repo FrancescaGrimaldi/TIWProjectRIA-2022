@@ -19,7 +19,7 @@
 	function WelcomeMessage(_username, messagecontainer) {
 		this.username = _username;
 		this.show = function() {
-			messagecontainer.textContent = this.username;
+			messagecontainer.textContent = "Welcome back, " + this.username;
 		}
 	}
 
@@ -28,7 +28,7 @@
 		this.place = _place;
 
 		this.reset = function() {
-			this.place.style.display = "none";
+			this.place.style.visibility = "hidden";
 		};
 
 		this.show = function(next) {
@@ -39,18 +39,19 @@
 						let message = req.responseText;
 						if (req.status == 200) {
 							var meetingsToShow = JSON.parse(req.responseText);
-							if (meetings == null || meetings.size() == 0) {   //check the variable type of meetings
-								//let text = document.createElement("h4");
-								place.textContent = "You haven't created any meeting";
-								//place.appendChild(text);
+							if (meetingsToShow == null || meetingsToShow.length == 0) {   //check the variable type of meetings
+								self.alert.textContent = "You haven't created any meeting";
 								return;
 							}
-							let meetTable = document.createElement('table');
+
+							let meetTable = document.createElement("table");
 							meetTable.border = "1px soldid black";
 							self.update(meetingsToShow, meetTable); // self visible by closure
 
+							if (next) next();
+
 						} else if (req.status == 403) {
-							window.sessionStorage.removeItem('user');
+							window.sessionStorage.removeItem("username");
 						}
 						else {
 							self.alert.textContent = message;
@@ -65,41 +66,36 @@
 			this.meetTable = _meetTable;
 
 			let self = this;
-			let tr = document.createElement('tr');
+			let tr = document.createElement("tr");
 			let tabFields = ['Title', 'Date', 'Time', 'Duration', 'Maximum number of partecipants'];
 			let th, text;
 			let td1, td2, td3, td4, td5;
-			//let title, date, time, duration, maxParts;
+
+			this.place.innerHTML = "";
 
 			for (var i = 0; i < tabFields.length; i++) {
-				th = document.createElement('th'); 			//column
-				text = document.createTextNode(array[i]); 	//column title
+				th = document.createElement("th"); 			//column
+				text = document.createTextNode(tabFields[i]); 	//column title
 				th.appendChild(text);
 				tr.appendChild(th);
 			}
-			meetTable.appendChild(tr);
+			this.meetTable.appendChild(tr);
 
 
-			meetingsToShow.forEach(function(meet) {		// 'this' is not visible here, 'self' is
-				tr = document.createElement('tr');
+			this.meetingsToShow.forEach(function(meet) {		// 'this' is not visible here, 'self' is
+				tr = document.createElement("tr");
 
-				td1 = document.createElement('td');
-				td2 = document.createElement('td');
-				td3 = document.createElement('td');
-				td4 = document.createElement('td');
-				td5 = document.createElement('td');
+				td1 = document.createElement("td");
+				td2 = document.createElement("td");
+				td3 = document.createElement("td");
+				td4 = document.createElement("td");
+				td5 = document.createElement("td");
 
-				/*title = document.createTextNode(meet.title);    	//da modificare con i tipi di variable giusto
-				date = document.createTextNode(meet.date);			//da modificare con i tipi di variable giusto
-				time = document.createTextNode(meet.time);			//da modificare con i tipi di variable giusto
-				duration = document.createTextNode(meet.duration);	//da modificare con i tipi di variable giusto
-				maxParts = document.createTextNode(meet.maxParts);	//da modificare con i tipi di variable giusto*/
-
-				td1.textContent = meet.title;    	//da modificare con i tipi di variable giusto??
+				td1.textContent = meet.title;
 				td2.textContent = meet.date;
 				td3.textContent = meet.time;
 				td4.textContent = meet.duration;
-				td5.textContent = meet.maxParts;
+				td5.textContent = meet.maxPart;
 
 				tr.appendChild(td1);
 				tr.appendChild(td2);
@@ -107,15 +103,13 @@
 				tr.appendChild(td4);
 				tr.appendChild(td5);
 
-				table.appendChild(tr);
-			})
+				self.meetTable.appendChild(tr);
+			});
 
-			place.appendChild(meetTable);
+			this.place.appendChild(_meetTable);
+			this.place.style.visibility = "visible";
 		}
 	}
-
-
-
 
 
 	function InvitedMeeting(_alert, _place) {
@@ -123,7 +117,7 @@
 		this.place = _place;
 
 		this.reset = function() {
-			this.place.style.display = "none";
+			this.place.style.visibility = "hidden";
 		};
 
 		this.show = function(next) {
@@ -134,18 +128,19 @@
 						let message = req.responseText;
 						if (req.status == 200) {
 							var meetingsToShow = JSON.parse(req.responseText);
-							if (meetings == null || meetings.size() == 0) {   //check the variable type of meetings
-								//let text = document.createElement("h4");
-								place.textContent = "You haven't been invited to any meeting";
-								//place.appendChild(text);
+							if (meetingsToShow == null || meetingsToShow.length == 0) {   //check the variable type of meetings
+								self.alert.textContent = "You haven't been invited to any meeting";
 								return;
 							}
-							let meetTable = document.createElement('table');
+
+							let meetTable = document.createElement("table");
 							meetTable.border = "1px soldid black";
 							self.update(meetingsToShow, meetTable); // self visible by closure
 
+							if (next) next();
+
 						} else if (req.status == 403) {
-							window.sessionStorage.removeItem('user');
+							window.sessionStorage.removeItem("username");
 						}
 						else {
 							self.alert.textContent = message;
@@ -160,44 +155,38 @@
 			this.meetTable = _meetTable;
 
 			let self = this;
-			let tr = document.createElement('tr');
+			let tr = document.createElement("tr");
 			let tabFields = ['Title', 'Date', 'Time', 'Duration', 'Max partecipants', 'Creator'];
 			let th, text;
 			let td1, td2, td3, td4, td5, td6;
-			//let title, date, time, duration, maxParts;
+
+			this.place.innerHTML = "";
 
 			for (var i = 0; i < tabFields.length; i++) {
-				th = document.createElement('th'); 			//column
-				text = document.createTextNode(array[i]); 	//column title
+				th = document.createElement("th"); 				//column
+				text = document.createTextNode(tabFields[i]); 	//column title
 				th.appendChild(text);
 				tr.appendChild(th);
 			}
-			meetTable.appendChild(tr);
+			this.meetTable.appendChild(tr);
 
 
-			meetingsToShow.forEach(function(meet) {		// 'this' is not visible here, 'self' is
-				tr = document.createElement('tr');
+			this.meetingsToShow.forEach(function(meet) {		// 'this' is not visible here, 'self' is
+				tr = document.createElement("tr");
 
-				td1 = document.createElement('td');
-				td2 = document.createElement('td');
-				td3 = document.createElement('td');
-				td4 = document.createElement('td');
-				td5 = document.createElement('td');
-				td6 = document.createElement('td');
+				td1 = document.createElement("td");
+				td2 = document.createElement("td");
+				td3 = document.createElement("td");
+				td4 = document.createElement("td");
+				td5 = document.createElement("td");
+				td6 = document.createElement("td");
 
-				/*title = document.createTextNode(meet.title);    	//da modificare con i tipi di variable giusto
-				date = document.createTextNode(meet.date);			//da modificare con i tipi di variable giusto
-				time = document.createTextNode(meet.time);			//da modificare con i tipi di variable giusto
-				duration = document.createTextNode(meet.duration);	//da modificare con i tipi di variable giusto
-				maxParts = document.createTextNode(meet.maxParts);	//da modificare con i tipi di variable giusto
-				creator = document.createTextNode(meet.creator);	//da modificare con i tipi di variable giusto*/
-
-				td1.textContent = meet.title;    	//da modificare con i tipi di variable giusto??
+				td1.textContent = meet.title;
 				td2.textContent = meet.date;
 				td3.textContent = meet.time;
 				td4.textContent = meet.duration;
-				td5.textContent = meet.maxParts;
-				td6.textContent = meet.creator;
+				td5.textContent = meet.maxPart;
+				td6.textContent = meet.creatorUsername;
 
 				tr.appendChild(td1);
 				tr.appendChild(td2);
@@ -206,10 +195,11 @@
 				tr.appendChild(td5);
 				tr.appendChild(td6);
 
-				table.appendChild(tr);
+				self.meetTable.appendChild(tr);
 			})
 
-			place.appendChild(meetTable);
+			this.place.appendChild(_meetTable);
+			this.place.style.visibility = "visible";
 		}
 	}
 
@@ -233,10 +223,10 @@
 	function PageOrchestrator() {
 
 		this.start = function() {
+
 			// init welcome message
 			welcomeMessage = new WelcomeMessage(sessionStorage.getItem("username"), document.getElementById("welcomeMessage"));
 			welcomeMessage.show();
-			
 
 			// handles logout
 			document.getElementById("logoutButton").addEventListener('click', () => {
@@ -245,15 +235,17 @@
 
 			// init created meeting table
 			createdMeeting = new CreatedMeeting(
-				document.getElementById("genericMeetingError"),
+				document.getElementById("voidCMeetingArea"),
 				document.getElementById("createdMeetingArea")
 			);
+			createdMeeting.show();
 
 			// init invited meeting table
 			invitedMeeting = new InvitedMeeting(
-				document.getElementById("genericMeetingError"),
+				document.getElementById("voidIMeetingArea"),
 				document.getElementById("invitedMeetingArea")
 			);
+			invitedMeeting.show();
 
 			//↓ ↓ ↓ ↓ ↓ ↓ ↓   TO ADAPT OR DELETE   ↓ ↓ ↓ ↓ ↓ ↓ ↓
 			/* register folder_form wizard
@@ -267,9 +259,9 @@
 			invitedMeeting.reset();
 
 			//↓ ↓ ↓ ↓ ↓ ↓ ↓   TO ADAPT OR DELETE   ↓ ↓ ↓ ↓ ↓ ↓ ↓
-			documentHandler.reset();
+			/*documentHandler.reset();
 			folderTree.show(false);
-			wizard.reset();
+			wizard.reset();*/
 		};
 	}
 
