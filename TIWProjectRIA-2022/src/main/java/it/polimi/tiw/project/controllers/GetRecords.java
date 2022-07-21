@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import it.polimi.tiw.project.beans.User;
 import it.polimi.tiw.project.utilities.ConnectionHandler;
 
 @WebServlet("/GetRecords")
+@MultipartConfig
 public class GetRecords extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
@@ -52,7 +54,6 @@ public class GetRecords extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		if (session.isNew() || session.getAttribute("user") == null) {
-			//System.out.println("\nDENTRO L'IF DELLA SESSIONE NUOVA IN GOTORECORDSPAGE\n");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Incorrect param values");
 			return;
@@ -74,6 +75,8 @@ public class GetRecords extends HttpServlet {
 		response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(rUsersJson);
+        
+        response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	

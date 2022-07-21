@@ -6,14 +6,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import it.polimi.tiw.project.DAO.UserDAO;
 import it.polimi.tiw.project.beans.User;
@@ -21,6 +24,7 @@ import it.polimi.tiw.project.utilities.ConnectionHandler;
 import it.polimi.tiw.project.utilities.MeetingForm;
 
 @WebServlet("/GoToRecordsPage")
+@MultipartConfig
 public class GoToRecordsPage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
@@ -50,8 +54,8 @@ public class GoToRecordsPage extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		if (session.isNew() || session.getAttribute("user") == null) {
-			//System.out.println("\nDENTRO L'IF DELLA SESSIONE NUOVA IN GOTORECORDSPAGE\n");
-			String loginpath = getServletContext().getContextPath() + "/index.html";
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Incorrect param values");
 			return;
 		}
 
@@ -67,7 +71,7 @@ public class GoToRecordsPage extends HttpServlet {
 		//the first half is done
 		if (meetF.isValid()) {
 			//redirect to the RecordsPage.html to select participants
-			session.setAttribute("attempt", 1);
+			session.setAttribute("attempt", 1);	// salvare anche lato Client (sessionStorage)
 			session.setAttribute("meetF", meetF);
 			
 			UserDAO uDAO = new UserDAO(connection);
@@ -81,22 +85,25 @@ public class GoToRecordsPage extends HttpServlet {
 				return;
 			}
 			
-			String path = "/WEB-INF/RecordsPage.html";
-			ServletContext servletContext = getServletContext();
-			
-			ctx.setVariable("rUsers", rUsers);
-			ctx.setVariable("sUsers", sUsers);
-			ctx.setVariable("attempt", 1);
+			Gson gson = new GsonBuilder().create();
+	        String rUsersJson = gson.toJson(rUsers);
+	        String sUsersJson = gson.toJson(sUsers);
+	        String attemptJson = gson.toJson(1);
+
+			response.setContentType("application/json");
+	        response.setCharacterEncoding("UTF-8");
+	        response.getWriter().write(rUsersJson);
+	        response.getWriter().write(sUsersJson);
+	        response.getWriter().write(attemptJson);
+	        
+			response.setStatus(HttpServletResponse.SC_OK);
 			
 			
 		} else {
-			//we should redirect to homepage and display the errors
-			String path = "/GoToHomepage";
-			
-			request.setAttribute("errors", meetF.getErrors());
-			
-			RequestDispatcher dispatcher = request.getRequestDispatcher(path);
-			dispatcher.forward(request, response);
+			String genErrors = meetF.getErrors();
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println(genErrors);
+			return;
 		}
 
 	}

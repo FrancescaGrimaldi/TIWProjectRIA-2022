@@ -8,11 +8,15 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import it.polimi.tiw.project.DAO.MeetingDAO;
 import it.polimi.tiw.project.DAO.UserDAO;
@@ -21,6 +25,7 @@ import it.polimi.tiw.project.utilities.ConnectionHandler;
 import it.polimi.tiw.project.utilities.MeetingForm;
 
 @WebServlet("/InvitePeople")
+@MultipartConfig
 public class InvitePeople extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
@@ -50,13 +55,15 @@ public class InvitePeople extends HttpServlet {
 		// If the user is not logged in (not present in session) redirect to the login
 		HttpSession session = request.getSession();
 		if (session.isNew() || session.getAttribute("user") == null) {
-			String loginpath = getServletContext().getContextPath() + "/index.html";
-			response.sendRedirect(loginpath);
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Incorrect param values");
 			return;
 		}
 		
 		if(session.getAttribute("attempt")!=null && (int)session.getAttribute("attempt") <= 3) {
+			//modify checkbox in html and everything related
 			String[] sUsernames = request.getParameterValues("id");
+			
 			MeetingForm meetF = (MeetingForm)session.getAttribute("meetF");
 			int maxPart = meetF.getMaxPart();
 			
@@ -75,11 +82,10 @@ public class InvitePeople extends HttpServlet {
 					session.removeAttribute("meetF");
 					session.removeAttribute("attempt");
 					
-					String ctxpath = getServletContext().getContextPath();
-					String path = ctxpath + "/GoToHomepage";
-					response.sendRedirect(path);
+					response.setStatus(HttpServletResponse.SC_OK);
 				} catch(SQLException e3) {
-					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Issue with DB");
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().println("Issue with DB");
 					return;
 				}
 				
@@ -87,9 +93,8 @@ public class InvitePeople extends HttpServlet {
 				session.removeAttribute("meetF");
 				session.removeAttribute("attempt");
 				
-				String path = "/WEB-INF/CancellationPage.html";
-				ServletContext servletContext = getServletContext();
-				
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return;
 			} else {
 
 				int attempt = (int)session.getAttribute("attempt")+1;
@@ -105,20 +110,27 @@ public class InvitePeople extends HttpServlet {
 					e.printStackTrace();
 				}
 				
+				//checkbox
 				for(String s : sUsernames) {
 					sUsers.add(s);
 				}
 				
 				int toDeselect = sUsernames.length-maxPart;
 				
-				String path = "/WEB-INF/RecordsPage.html";
-				ServletContext servletContext = getServletContext();
-				
-				ctx.setVariable("rUsers", rUsers);
-				ctx.setVariable("sUsers", sUsers);
-				ctx.setVariable("toDeselect", toDeselect);
-				ctx.setVariable("attempt", attempt);
-				
+				Gson gson = new GsonBuilder().create();
+		        String rUsersJson = gson.toJson(rUsers);
+		        String sUsersJson = gson.toJson(sUsers);
+		        String toDeselectJson = gson.toJson(toDeselect);
+		        String attemptJson = gson.toJson(attempt);
+
+				response.setContentType("application/json");
+		        response.setCharacterEncoding("UTF-8");
+		        response.getWriter().write(rUsersJson);
+		        response.getWriter().write(sUsersJson);
+		        response.getWriter().write(toDeselectJson);
+		        response.getWriter().write(attemptJson);
+		        
+		        response.setStatus(HttpServletResponse.SC_ACCEPTED);
 			}
 			
 		}
