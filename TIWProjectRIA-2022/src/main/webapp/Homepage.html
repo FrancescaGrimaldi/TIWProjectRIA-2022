@@ -3,7 +3,7 @@
 <head>
 	<meta charset="ISO-8859-1">
 	<title>Home</title>
-	<link rel="stylesheet" type="text/css" media="all" 	href="../CSS/mystyle.css"/>
+	<link rel="stylesheet" type="text/css" media="all" 	href="../CSS/modalWindow.css"/>
 	<script src="homepageController.js" charset="utf-8" defer></script>
 	<script src="utils.js" charset="utf-8" defer></script>
 </head>
@@ -48,13 +48,30 @@
 						min=1 required />
 				</p>
 
-				<input type="submit" name="Create Meeting" id="createMeetingButton">
+				<input data-model-target="#modal" type="submit" name="Create Meeting" id="createMeetingButton">
 			</fieldset>
 		</form>
 		
-		<p class="error" id="genericMeetingError"> </p>
+		<div class="active" class="modal" id="modal">
+			<div class="modal-header">
+				<div class="title">Records Window</div>
+			</div>
+			<div class="modal-body">
+				<div><span id="errorUsersArea"></span></div>
+					<form action="#">
+						<div><span id="usersArea"></span></div>
+						<button data-submit-button class="submit-button">Invite</button>
+						<button data-cancel-button class="cancel-button">Cancel</button>
+					</form>
+			</div>
+		</div>
 		
+		<div class="active" id="overlay"></div>
+		
+		<p class="error" id="genericMeetingError"> </p>	
 	</div>
+	
+	
 	
 </body>
 </html>

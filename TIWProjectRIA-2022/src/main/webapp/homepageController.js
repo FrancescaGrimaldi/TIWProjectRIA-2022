@@ -106,7 +106,7 @@
 				self.meetTable.appendChild(tr);
 			});
 
-			this.place.appendChild(_meetTable);
+			this.place.appendChild(this.meetTable);
 			this.place.style.visibility = "visible";
 		}
 	}
@@ -198,14 +198,130 @@
 				self.meetTable.appendChild(tr);
 			})
 
-			this.place.appendChild(_meetTable);
+			this.place.appendChild(this.meetTable);
+			this.place.style.visibility = "visible";
+		}
+	}
+
+	function RegisteredUsers(_alert, _place, _form) {
+		this.alert = _alert;
+		this.place = _place;
+		this.form = _form;
+
+		this.reset = function() {
+			this.place.style.visibility = "hidden";
+		};
+
+		this.show = function(next) {
+			const self = this;
+			if (this.form.checkValidity()) {
+				makeCall("POST", "GoToRecordsPage", this.form,
+					function(req) {
+						if (req.readyState == 4) {
+							let message = req.responseText;
+							if (req.status == 200) {
+								var rUsers = JSON.parse(req.responseText.rUsersJson);
+								var sUsers = JSON.parse(req.responseText.sUsersJson);
+								var attempt = JSON.parse(req.responseText.attemptJson);
+								var toDeselect = 0;
+
+								sessionStorage.setItem("attempt", attempt);
+
+								if (rUsers == null || rUsers.length == 0) {   //check the variable type of meetings
+									self.alert.textContent = "Your contact list is empty";
+									return;
+								}
+
+								let usersTable = document.createElement("table");
+								usersTable.border = "1px soldid black";
+								self.update(rUsers, sUsers, attempt, toDeselect, usersTable); // self visible by closure
+
+								openModal(document.querySelector(button.dataset.modalTarget));
+
+								if (next) next();
+
+							} else if (req.status == 401) {
+								window.location.href = "index.html";
+							} else if (req.status == 403) {
+								window.sessionStorage.removeItem("username");
+							}
+							else {
+								self.alert.textContent = message;
+							}
+						}
+					}, false);
+			} else {
+				this.form.reportValidity();
+			}
+		};
+
+		this.update = function(_rUsers, _sUsers, _attempt, _toDeselect, _usersTable) {
+			this.usersTable = _usersTable;
+			this.rUsers = _rUsers;
+			this.sUsers = _sUsers;
+			this.attempt = _attempt;
+			this.toDeselect = _toDeselect;
+
+
+			let self = this;
+			let tr = document.createElement("tr");
+			let tabFields = ['Invited', 'Username', 'Email', 'Name', 'Surname'];
+			let th, text;
+			let td1, td2, td3, td4, td5;
+
+			this.place.innerHTML = "";
+			
+			if (this.toDeselect == 0)
+				document.getElementById("errorUsersArea").textContext("This is your attempt number " + this.attempt);
+			if (this.toDeselect > 0)
+				document.getElementById("errorUsersArea").textContext("This is your attempt number " + this.attempt +
+					". You need to deselect at least " + this.toDeselect + " people.");
+
+			for (var i = 0; i < tabFields.length; i++) {
+				th = document.createElement("th"); 				//column
+				text = document.createTextNode(tabFields[i]); 	//column title
+				th.appendChild(text);
+				tr.appendChild(th);
+			}
+			this.usersTable.appendChild(tr);
+
+
+			this.usersTable.forEach(function(user) {		// 'this' is not visible here, 'self' is
+				tr = document.createElement("tr");
+
+				td1 = document.createElement("td");
+				td2 = document.createElement("td");
+				td3 = document.createElement("td");
+				td4 = document.createElement("td");
+				td5 = document.createElement("td");
+
+				td1.type = "checkbox";
+				td1.name = id;
+				td1.value = user.username;
+				td1.checked = sUsers.contains(user.username) && sUsers != null;
+
+				td2.textContent = user.username;
+				td3.textContent = user.email;
+				td4.textContent = user.name;
+				td5.textContent = user.surname;
+
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tr.appendChild(td3);
+				tr.appendChild(td4);
+				tr.appendChild(td5);
+
+				self.usersTable.appendChild(tr);
+			})
+
+			this.place.appendChild(this.usersTable);
 			this.place.style.visibility = "visible";
 		}
 	}
 
 	function setMinDate(_place) {
 		this.place = _place;
-		
+
 		var today = new Date();
 		var dd = today.getDate();
 		var mm = today.getMonth() + 1; //January is 0
@@ -221,9 +337,102 @@
 		today = yyyy + '-' + mm + '-' + dd;
 		this.place.setAttribute("min", today);
 	}
-	
 	document.querySelector("input[name='date']").addEventListener("blur", setMinDate(document.getElementById("datefield")));
-	
+
+
+	const openModalButtons = document.querySelectorAll('[data-modal-target]');
+	const cancelModalButtons = document.querySelectorAll('[data-cancel-button]');
+	const submitModalButtons = document.querySelectorAll('[data-submit-button]');
+	const overlay = document.getElementById('overlay');
+
+	openModalButtons.forEach(button => {
+		button.addEventListener('click', (e) => {
+			e.preventDefault();
+			var form = e.target.closest("form");
+
+			var registeredUsers = new RegisteredUsers(
+				document.getElementById("errorUsersArea"),
+				document.getElementById("usersArea"),
+				form);
+			registeredUsers.show();
+		})
+	})
+
+	submitModalButtons.forEach(button => {
+		button.addEventListener('click', (e) => {
+			e.preventDefault();
+			var form = e.target.closest("form");
+			if (form.checkValidity()) {
+				makeCall("POST", "InvitePeople", e.target.closest("form"), function(req) {
+					if (req.readyState == XMLHttpRequest.DONE) {
+						var message = req.responseText;
+						switch (req.status) {
+							case 200:
+								sessionStorage.removeItem("attempt");
+								closeModal(button.closest('.modal'));
+								
+								createdMeeting.show();
+								invitedMeeting.show();
+								break;
+								
+							case 202:
+								rUsers = JSON.parse(req.responseText.rUsersJson);
+								sUsers = JSON.parse(req.responseText.sUsersJson);
+								attempt = JSON.parse(req.responseText.attemptJson);
+								toDeselect = JSON.parse(req.responseText.toDeselectJson);
+								
+								sessionStorage.setItem("attempt", attempt);
+
+							
+								registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
+								
+								break;
+								
+							case 400: // bad request
+								sessionStorage.removeItem("attempt");
+								closeModal(button.closest('.modal'));
+								break;
+								
+							case 502: // server error
+								alert(message);
+								closeModal(button.closest('.modal'));
+								break;
+						}
+					}
+				}, false);
+			} else {
+				form.reportValidity();
+			}
+			// if servlet
+			//else
+
+			closeModal(button.closest('.modal'));
+		})
+	})
+
+	cancelModalButtons.forEach(button => {
+		button.addEventListener('click', (e) => {
+			const modal = button.closest('.modal');
+			//svuota tutto e poi
+			closeModal(modal);
+		})
+	})
+
+
+	function openModal(modal) {
+		if (modal == null) return;
+
+		modal.classList.add('active');
+		overlay.classList.add('active');
+	}
+
+	function closeModal(modal) {
+		if (modal == null) return;
+
+		modal.classList.remove('active');
+		overlay.classList.remove('active');
+	}
+
 
 	function PageOrchestrator() {
 
@@ -239,19 +448,19 @@
 			})
 
 			// init created meeting table
-			createdMeeting = new CreatedMeeting(
+			var createdMeeting = new CreatedMeeting(
 				document.getElementById("voidCMeetingArea"),
 				document.getElementById("createdMeetingArea")
 			);
 			createdMeeting.show();
 
 			// init invited meeting table
-			invitedMeeting = new InvitedMeeting(
+			var invitedMeeting = new InvitedMeeting(
 				document.getElementById("voidIMeetingArea"),
 				document.getElementById("invitedMeetingArea")
 			);
 			invitedMeeting.show();
-			
+
 			//↓ ↓ ↓ ↓ ↓ ↓ ↓   TO ADAPT OR DELETE   ↓ ↓ ↓ ↓ ↓ ↓ ↓
 			/* register folder_form wizard
 			wizard = new Wizard(document.getElementById("create-content"));
