@@ -45,7 +45,7 @@
 							}
 
 							let meetTable = document.createElement("table");
-							meetTable.border = "1px soldid black";
+							meetTable.border = "1px solid black";
 							self.update(meetingsToShow, meetTable); // self visible by closure
 
 							if (next) next();
@@ -134,7 +134,7 @@
 							}
 
 							let meetTable = document.createElement("table");
-							meetTable.border = "1px soldid black";
+							meetTable.border = "1px solid black";
 							self.update(meetingsToShow, meetTable); // self visible by closure
 
 							if (next) next();
@@ -239,7 +239,7 @@
 								}
 
 								let usersTable = document.createElement("table");
-								usersTable.border = "1px soldid black";
+								usersTable.border = "1px solid black";
 								self.update(rUsers, sUsers, attempt, toDeselect, usersTable); // self visible by closure
 
 								modal_container.classList.add("show");
@@ -247,6 +247,8 @@
 
 								if (next) next();
 
+							} else if (req.status == 400) {
+								self.alert.textContent = message;
 							} else if (req.status == 401) {
 								window.location.href = "index.html";
 							} else if (req.status == 403) {
