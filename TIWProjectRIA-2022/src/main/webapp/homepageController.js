@@ -203,6 +203,11 @@
 		}
 	}
 
+	var rUsers;
+	var sUsers;
+	var attempt;
+	var toDeselect;
+	
 	function RegisteredUsers(_alert, _place, _form) {
 		this.alert = _alert;
 		this.place = _place;
@@ -221,10 +226,10 @@
 						if (req.readyState == 4) {
 							let message = req.responseText;
 							if (req.status == 200) {
-								var rUsers = JSON.parse(req.responseText);
-								var sUsers = [];
-								var attempt = 1;
-								var toDeselect = 0;
+								rUsers = JSON.parse(req.responseText);
+								sUsers = [];
+								attempt = 1;
+								toDeselect = 0;
 
 								sessionStorage.setItem("attempt", attempt);
 
@@ -237,7 +242,8 @@
 								usersTable.border = "1px soldid black";
 								self.update(rUsers, sUsers, attempt, toDeselect, usersTable); // self visible by closure
 
-								openModal(document.querySelector(button.dataset.modalTarget));
+								modal_container.classList.add("show");
+								//document.write(modal_container.classList.contains("show"));
 
 								if (next) next();
 
@@ -340,38 +346,27 @@
 	}
 	document.querySelector("input[name='date']").addEventListener("blur", setMinDate(document.getElementById("datefield")));
 
-
-	const openModalButtons = document.querySelectorAll('[data-modal-target]');
-	const cancelModalButtons = document.querySelectorAll('[data-cancel-button]');
-	const submitModalButtons = document.querySelectorAll('[data-submit-button]');
-	const overlay = document.getElementById('overlay');
+	const inviteButton = document.getElementById("inviteButton");
+	const cancelButton = document.getElementById("cancelButton");
+	const submitButton = document.getElementById("createMeetingButton");
+	const modal_container = document.getElementById("modal-container");
 	
-	document.getElementById("createMeetingButton").addEventListener('click', (e) => {
+	var registeredUsers;
+	
+	submitButton.addEventListener('click', (e) => {
 		e.preventDefault();
 		var form = e.target.closest("form");
+		modal_container.classList.add("show");
 
-		var registeredUsers = new RegisteredUsers(
+		registeredUsers = new RegisteredUsers(
 			document.getElementById("errorUsersArea"),
 			document.getElementById("usersArea"),
 			form);
 		registeredUsers.show();
+
 	});
 
-	/*openModalButtons.forEach(button => {
-		button.addEventListener('click', (e) => {
-			// e.preventDefault();
-			var form = e.target.closest("form");
-			//document.write("	sto aggiungendo il listener su submit1 meeting");
-
-			var registeredUsers = new RegisteredUsers(
-				document.getElementById("errorUsersArea"),
-				document.getElementById("usersArea"),
-				form);
-			registeredUsers.show();
-		})
-	})*/
-	
-	document.getElementById("inviteButton").addEventListener('click', (e) => {
+	inviteButton.addEventListener('click', (e) => {
 		e.preventDefault();
 			var form = e.target.closest("form");
 			if (form.checkValidity()) {
@@ -380,36 +375,33 @@
 						var message = req.responseText;
 						switch (req.status) {
 							case 200:
-								document.write("Sono nel case 200 di invite ppl")
+								//document.write("Sono nel case 200 di invite ppl")
 								sessionStorage.removeItem("attempt");
-								closeModal(button.closest('.modal'));
-								
+
 								createdMeeting.show();
 								invitedMeeting.show();
 								break;
 								
 							case 202:
-								document.write("Sono nel case 202 di invite ppl")
-								document.write("rusers =" + rUsers)
-								//rUsers = JSON.parse(req.responseText.rUsersJson);
-								sUsers = JSON.parse(req.responseText.sUsersJson);
-								document.write("\nsusers = " + sUsers)
-								//attempt = JSON.parse(req.responseText.attemptJson);
-								attempt = session.getAttribute("attempt") + 1;
-								toDeselect = sUsers.length - form.elements['maxPart'];
+								sUsers = JSON.parse(req.responseText);
+								attempt = sessionStorage.getItem("attempt");
+								attempt++;
+								var maxPart = document.getElementById("maxPart").value;
+								toDeselect = sUsers.length - maxPart;
 								
 								sessionStorage.setItem("attempt", attempt);
+								document.getElementById("errorUsersArea").textContent =
+									("This is your attempt number " + attempt + ".\n You have to de-select " + toDeselect + " people.");
 								registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
 								break;
 								
 							case 400: // bad request
+								//document.write("servlet errore 400");
 								sessionStorage.removeItem("attempt");
-								closeModal(button.closest('.modal'));
 								break;
 								
 							case 502: // server error
 								alert(message);
-								closeModal(button.closest('.modal'));
 								break;
 						}
 					}
@@ -418,84 +410,23 @@
 				form.reportValidity();
 			}
 	});
-
-	/*submitModalButtons.forEach(button => {
-		button.addEventListener('click', (e) => {
-			e.preventDefault();
-			var form = e.target.closest("form");
-			if (form.checkValidity()) {
-				makeCall("POST", "InvitePeople", e.target.closest("form"), function(req) {
-					if (req.readyState == XMLHttpRequest.DONE) {
-						var message = req.responseText;
-						switch (req.status) {
-							case 200:
-								sessionStorage.removeItem("attempt");
-								closeModal(button.closest('.modal'));
-								
-								createdMeeting.show();
-								invitedMeeting.show();
-								break;
-								
-							case 202:
-								rUsers = JSON.parse(req.responseText.rUsersJson);
-								sUsers = JSON.parse(req.responseText.sUsersJson);
-								attempt = JSON.parse(req.responseText.attemptJson);
-								toDeselect = JSON.parse(req.responseText.toDeselectJson);
-								
-								sessionStorage.setItem("attempt", attempt);
-								registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
-								break;
-								
-							case 400: // bad request
-								sessionStorage.removeItem("attempt");
-								closeModal(button.closest('.modal'));
-								break;
-								
-							case 502: // server error
-								alert(message);
-								closeModal(button.closest('.modal'));
-								break;
-						}
-					}
-				}, false);
-			} else {
-				form.reportValidity();
-			}
-		})
-	})*/
 	
-	document.getElementById("cancelButton").addEventListener('click', (e) => {
-		const modal = button.closest('.modal');
-			//svuota tutto e poi
-			closeModal(modal);
+	cancelButton.addEventListener('click', (e) => {
+		sessionStorage.removeItem("attempt");
+		
+		document.getElementsById("meetingForm").reset();
+		modal_container.classList.remove("show");
+
+		/*document.getElementsByName("title").reset;
+		document.getElementsByName("date").reset;
+		document.getElementsByName("time").re;
+		document.getElementsByName("duration").value = "";
+		document.getElementsByName("maxPart").value = "";*/
 	});
+
+	var createdMeeting;
+	var invitedMeeting;
 	
-	
-
-	/*cancelModalButtons.forEach(button => {
-		button.addEventListener('click', (e) => {
-			const modal = button.closest('.modal');
-			//svuota tutto e poi
-			closeModal(modal);
-		})
-	})*/
-
-
-	function openModal(modal) {
-		if (modal == null) return;
-
-		modal.classList.add('active');
-		overlay.classList.add('active');
-	}
-
-	function closeModal(modal) {
-		if (modal == null) return;
-
-		modal.classList.remove('active');
-		overlay.classList.remove('active');
-	}
-
-
 	function PageOrchestrator() {
 
 		this.start = function() {
@@ -510,14 +441,14 @@
 			})
 
 			// init created meeting table
-			var createdMeeting = new CreatedMeeting(
+			createdMeeting = new CreatedMeeting(
 				document.getElementById("voidCMeetingArea"),
 				document.getElementById("createdMeetingArea")
 			);
 			createdMeeting.show();
 
 			// init invited meeting table
-			var invitedMeeting = new InvitedMeeting(
+			invitedMeeting = new InvitedMeeting(
 				document.getElementById("voidIMeetingArea"),
 				document.getElementById("invitedMeetingArea")
 			);

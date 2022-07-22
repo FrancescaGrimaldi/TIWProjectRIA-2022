@@ -3,7 +3,7 @@
 <head>
 	<meta charset="ISO-8859-1">
 	<title>Home</title>
-	<link rel="stylesheet" type="text/css" media="all" 	href="../CSS/modalWindow.css"/>
+	<link rel="stylesheet" type="text/css" media="all" 	href="./css/modalWindow.css">
 	<script src="homepageController.js" charset="utf-8" defer></script>
 	<script src="utils.js" charset="utf-8" defer></script>
 </head>
@@ -28,7 +28,7 @@
 	
 	<div>
 		<h2>Complete the form to create a meeting</h2>
-		<form action="#">
+		<form action="#" id="meetingForm">
 			<fieldset>
 				<p>
 					Title: <input type="text" name="title" required />
@@ -44,34 +44,30 @@
 						required />
 				</p>
 				<p>
-					Maximum number of participants: <input type="number" name="maxPart"
-						min=1 required />
+					Maximum number of participants: <input type="number" name="maxPart" id="maxPart" min=1 required />
 				</p>
 
-				<input data-model-target="#modal" type="submit" name="Create Meeting" id="createMeetingButton">
+				<input type="submit" name="Create Meeting" id="createMeetingButton">
 			</fieldset>
 		</form>
 		
-		<div class="active" class="modal" id="modal">
-			<div class="modal-header">
-				<div class="title">Records Window</div>
-			</div>
-			<div class="modal-body">
-				<div><span id="errorUsersArea"></span></div>
-					<form action="#">
-						<div><span id="usersArea"></span></div>
-						<button data-submit-button class="submit-button" id="inviteButton" >Invite</button>
-						<button data-cancel-button class="cancel-button" id="cancelButton" >Cancel</button>
-					</form>
+		<div class="modal-container" id="modal-container">
+			<div class="modal">
+				<h3 class="title">Records Window</h3>
+				<span id="errorUsersArea"></span>
+				
+				<form action="#">
+					<div><span id="usersArea"></span></div>
+					<button class="submit-button" id="inviteButton" >Invite</button>
+					<button class="cancel-button" id="cancelButton" >Cancel</button>
+				</form>
 			</div>
 		</div>
 		
-		<div class="active" id="overlay"></div>
-		
-		<p class="error" id="genericMeetingError"> </p>	
+		<p class="error" id="genericMeetingError"></p>	
 	</div>
 	
-	
+
 	
 </body>
 </html>

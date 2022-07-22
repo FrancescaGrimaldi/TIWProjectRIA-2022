@@ -86,8 +86,6 @@ public class GoToRecordsPage extends HttpServlet {
 			Gson gson = new GsonBuilder().create();
 	        String rUsersJson = gson.toJson(rUsers);
 
-			System.out.println(rUsersJson);
-
 			response.setContentType("application/json");
 	        response.setCharacterEncoding("UTF-8");
 	        response.getWriter().append(rUsersJson);

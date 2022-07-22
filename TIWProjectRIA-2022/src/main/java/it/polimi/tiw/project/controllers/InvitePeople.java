@@ -91,7 +91,7 @@ public class InvitePeople extends HttpServlet {
 				session.removeAttribute("meetF");
 				session.removeAttribute("attempt");
 				
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			} else {
 
