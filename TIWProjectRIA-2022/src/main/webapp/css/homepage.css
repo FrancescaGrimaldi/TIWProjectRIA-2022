@@ -2,12 +2,63 @@
 	box-sizing: border-box;
 }
 
-.body {
-	background-image: linear-gradient(#f2edff, #E4C1F9);
+.back {
+	background-image: linear-gradient(#F7EDFF, #E4C1F9);
+    background-size: cover;
+	background-attachment: fixed;
+}
+
+.button {
+	background-color: #D3F8E2;
+	padding: 10px 15px;
+	border-radius: 10px;
+	box-shadow: 1px 1px 2px 3px grey;
+	border: 1px;
+}
+.button:hover {
+	background-color: #b7edcc;
+	transform: scale(1.03);
+}
+
+.button:active {
+	background-color: #a6e0bd;
+	transform: scale(0.97);
+}
+
+.cancel-button {
+	background-color: #EDE7B1;
+	padding: 10px 15px;
+	border-radius: 10px;
+	box-shadow: 1px 1px 2px 3px grey;
+	border: 1px;
+}
+.cancel-button:hover {
+	background-color: #dbd495;
+	transform: scale(1.03);
+}
+
+.cancel-button:active {
+	background-color: #d4cb81;
+	transform: scale(0.97);
+}
+
+.input {
+  border: none;
+  background-color: transparent;
+  border-bottom: 1px solid black;
+}
+
+.input:hover {
+	border: 2px solid black;
+}
+
+.input:active:focus {
+	background-color: rgba(255, 255, 255, 0.2);
+	border: 1px solid black;
 }
 
 .modal-container {
-	background-color: rgba(0, 0, 0, 0.3);
+	background-color: rgba(0, 0, 0, 0.2);
 	align-items: center;
 	justify-content: center;
 	position: fixed;
@@ -30,7 +81,7 @@
 
 .modal {
 	position: fixed;
-	background-color: white;
+	background-image: linear-gradient(#E6F6FF, #A9DEF9);
 	border: 1px solid black;
 	padding: 30px 50px;
 	border-radius: 10px;
