@@ -356,7 +356,6 @@
 	submitButton.addEventListener('click', (e) => {
 		e.preventDefault();
 		var form = e.target.closest("form");
-		modal_container.classList.add("show");
 
 		registeredUsers = new RegisteredUsers(
 			document.getElementById("errorUsersArea"),
@@ -376,7 +375,7 @@
 						switch (req.status) {
 							case 200:
 								//document.write("Sono nel case 200 di invite ppl")
-								sessionStorage.removeItem("attempt");
+								backToHomepage();
 
 								createdMeeting.show();
 								invitedMeeting.show();
@@ -397,7 +396,10 @@
 								
 							case 400: // bad request
 								//document.write("servlet errore 400");
-								sessionStorage.removeItem("attempt");
+								alert("You have try too hard. This meeting is impossible to create. " + 
+									"Sending you to the homepage");
+								backToHomepage();
+								
 								break;
 								
 							case 502: // server error
@@ -411,18 +413,20 @@
 			}
 	});
 	
-	cancelButton.addEventListener('click', (e) => {
+	cancelButton.addEventListener('click', () => {
+		backToHomepage();
+	});
+	
+	function backToHomepage() {
+		attempt = 0;
+		document.getElementById("errorUsersArea").textContent = "";
 		sessionStorage.removeItem("attempt");
 		
-		document.getElementsById("meetingForm").reset();
+		let inputs = document.querySelectorAll("input");
+		inputs.forEach((input) => (input.value = ""));
+		
 		modal_container.classList.remove("show");
-
-		/*document.getElementsByName("title").reset;
-		document.getElementsByName("date").reset;
-		document.getElementsByName("time").re;
-		document.getElementsByName("duration").value = "";
-		document.getElementsByName("maxPart").value = "";*/
-	});
+	}
 
 	var createdMeeting;
 	var invitedMeeting;
