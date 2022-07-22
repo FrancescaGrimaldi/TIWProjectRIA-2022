@@ -12,21 +12,21 @@
 <body>
 	<div align="right">
 		<form method="GET" action="index.html">
-			<button type="submit">Go back</button>
+			<button style="margin:10px" class="cancel-button" type="submit">Go back</button>
 		</form>
 	</div>
 
-	<h1>We're glad you want to join us!</h1>
-	<h2>Complete the following form to sign up:</h2>
+	<h1 class="text">We're glad you want to join us!</h1>
+	<h2 style="margin-bottom:40px" class="text">Complete the following form to sign up:</h2>
 
-	<form action="#">
-		<fieldset>
+	<form action="#" class="text">
+		
 			<p>
-				Username: <input class="input" type="text" name="username" required maxlength="50" />
+				Username: <input class="input" name="username" required maxlength="50" />
 			</p>
 			<p>
 				Email: <input class="input" type="email" name="email" required maxlength="100" />
-				<p class="emailError" id="emailError"> </p>
+				<p class="warning" id="emailError"> </p>
 			<p>
 				Password: <input class="input" type="password" name="password" required
 					maxlength="50" id="first_input" />
@@ -35,7 +35,7 @@
 				Confirm password: <input class="input" type="password" name="password2" required
 					maxlength="50" id="second_input" />
 			</p>
-				<p class="pwError" id="passwordError"> </p>
+				<p class="warning" id="passwordError"> </p>
 			<p>
 				Name: <input class="input" type="text" name="name" required maxlength="50" />
 			</p>
@@ -46,15 +46,15 @@
 				Age: <input class="input" type="number" name="age" required min="5" max="123" />
 			</p>
 			<p>
-				City: <input class="input" type="text" name="city" required maxlength="50" />
+				City: <input class="input" name="city" required maxlength="50" />
 			</p>
 
-			<input type="submit" name="Signup" id="subscribeButton">
-		</fieldset>
+			<input class="signUpButton" type="submit" name="Signup" id="subscribeButton">
+		
 	</form>
 	
-	<p class="error" id="chosenUsernameError"> </p>
-	<p class="genError" id="genericErrors"> </p>
+	<p class="warning" id="chosenUsernameError"> </p>
+	<p class="warning" id="genericErrors"> </p>
 	
 </body>
 </html>

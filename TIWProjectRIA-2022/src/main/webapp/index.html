@@ -10,30 +10,30 @@
 </head>
 
 <body>
-	<h1>ONLINE MEETINGS</h1>
+	<h1 class="text">ONLINE MEETINGS</h1>
 	<div>
-		<h2> Welcome to the Online Meetings app! </h2>
-			<div>
+		<h2 class="text"> Welcome to the Online Meetings app! </h2>
+			<div style="margin:10px" class="welcome">
 				<p> You can set date and time and invite your friends or
 					colleagues, or join them accepting their invitations. </p>
-				<p> If you're already a member, log in below, otherwise, sign up
+				<p  style="margin:4px">If you're already a member, log in below, otherwise, sign up
 					and then come back here!</p>
 				<form method="GET" action="SignUp.html">
-					<button class="button" type="submit">Sign up</button>
+					<button class="signUpButton" type="submit">Sign up</button>
 				</form>
 			</div>
 	</div>
 	
-	<p class="registration" id="registration"></p>
+	<p class="text" id="registration"></p>
 
-	<h2>Login</h2>
-	<form action="#">
-		Username: <input class="input" type="text" name="username" required> <br>
-		Password: <input class="input" type="password" name="password" required> <br>
+	<h2 style="margin:30px" class="text">Login</h2>
+	<form action="#" class="text">
+		Username <br> <input class="input" style="margin-bottom:40px" type="text" name="username" required> <br>
+		Password <br> <input class="input" type="password" name="password" required> <br>
 
-		<p class="error" id="errorMsg"></p>
+		<p class="warning" id="errorMsg"></p>
 
-		<input class="button" type="button" value="login" id="loginbutton">
+		<input class="loginButton" type="button" value="Login" id="loginbutton">
 	</form>
 </body>
 </html>
