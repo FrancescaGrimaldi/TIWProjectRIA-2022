@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html class="body">
 <head>
-	<meta charset="ISO-8859-1">
-	<title>Home</title>
-	<link rel="stylesheet" type="text/css" media="all" 	href="./css/modalWindow.css">
-	<script src="homepageController.js" charset="utf-8" defer></script>
-	<script src="utils.js" charset="utf-8" defer></script>
+<meta charset="ISO-8859-1">
+<title>Home</title>
+<link rel="stylesheet" type="text/css" media="all" href="./css/homepage.css">
+<script src="homepageController.js" charset="utf-8" defer></script>
+<script src="utils.js" charset="utf-8" defer></script>
 </head>
 
 <body>
@@ -15,17 +15,25 @@
 		</form>
 	</div>
 	<h1>Welcome to your home page!</h1>
-	<p class="welcome" id="welcomeMessage"> </p>
+	<p class="welcome" id="welcomeMessage"></p>
 
 	<h2>Meetings created:</h2>
-	<div><span id="createdMeetingArea"></span></div>
-	<div><span id="voidCMeetingArea"></span></div>
-		
+	<div>
+		<span id="createdMeetingArea"></span>
+	</div>
+	<div>
+		<span id="voidCMeetingArea"></span>
+	</div>
+
 	<h2>Meetings you are invited to:</h2>
-	<div><span id="invitedMeetingArea"></span></div>
-	<div><span id="voidIMeetingArea"></span></div>
-	
-	
+	<div>
+		<span id="invitedMeetingArea"></span>
+	</div>
+	<div>
+		<span id="voidIMeetingArea"></span>
+	</div>
+
+
 	<div>
 		<h2>Complete the form to create a meeting</h2>
 		<form action="#" id="meetingForm">
@@ -34,40 +42,43 @@
 					Title: <input type="text" name="title" required />
 				</p>
 				<p>
-					Date: <input type="date" name="date" id="datefield" min="2022-07-01" placeholder="yyyy-MM-dd" required />
+					Date: <input type="date" name="date" id="datefield"
+						min="2022-07-01" placeholder="yyyy-MM-dd" required />
 				</p>
 				<p>
 					Time: <input type="time" name="time" placeholder="hh:mm" required />
 				</p>
 				<p>
-					Duration (in minutes): <input type="number" name="duration" min=1
-						required />
+					Duration (in minutes): <input
+						type="number" name="duration" min=1 required />
 				</p>
 				<p>
-					Maximum number of participants: <input type="number" name="maxPart" id="maxPart" min=1 required />
+					Maximum number of participants: <input type="number" name="maxPart"
+						id="maxPart" min=1 required />
 				</p>
 
-				<button type="submit" name="createMeetingButton" id="createMeetingButton">Create Meeting</button>
+				<button type="submit" name="createMeetingButton"
+					id="createMeetingButton">Create Meeting</button>
 			</fieldset>
 		</form>
-		
+
 		<div class="modal-container" id="modal-container">
 			<div class="modal">
 				<h3 class="title">Records Window</h3>
 				<span id="errorUsersArea"></span>
-				
+
 				<form>
-					<div><span id="usersArea"></span></div>
-					<button class="submit-button" id="inviteButton" >Invite</button>
-					<button class="cancel-button" id="cancelButton" >Cancel</button>
+					<div>
+						<span id="usersArea"></span>
+					</div>
+					<button class="submit-button" id="inviteButton">Invite</button>
+					<button class="cancel-button" id="cancelButton">Cancel</button>
 				</form>
 			</div>
 		</div>
-		
-		<p class="error" id="genericMeetingError"></p>	
-	</div>
-	
 
-	
+		<p class="error" id="genericMeetingError"></p>
+	</div>
+
 </body>
 </html>

@@ -95,6 +95,7 @@ public class DateChecker {
 	public boolean isPastTime(java.sql.Time time) {
 		Date todayTime;
 		
+		System.out.println("\nPrima di parsare il tempo");
 		try {
 			todayTime = timeFormatter.parse(java.time.LocalTime.now().toString());
 			if(time.before(todayTime)) {
@@ -122,7 +123,7 @@ public class DateChecker {
 	 */
 	public boolean isToday(java.sql.Date date) {
 		Date todayDate;
-	
+
 		try {
 			todayDate = dateFormatter.parse(java.time.LocalDate.now().toString());
 			if(date.compareTo(todayDate) == 0) {
@@ -139,6 +140,7 @@ public class DateChecker {
 	
 	public String checkDate(int day, int month, int year) {
 		int[] months30Days = new int[] {4,6,9,11};
+		@SuppressWarnings("unused")
 		String dateError = null;
 		
 		if ( month < 1 || month > 12 ) {

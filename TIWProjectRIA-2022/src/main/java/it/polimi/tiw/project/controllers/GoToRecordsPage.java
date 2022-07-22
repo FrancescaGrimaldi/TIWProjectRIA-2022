@@ -63,13 +63,26 @@ public class GoToRecordsPage extends HttpServlet {
 		String title = request.getParameter("title");
 		String startDate = request.getParameter("date");
 		String startTime  = request.getParameter("time");
-		Integer duration = Integer.parseInt(request.getParameter("duration"));
-		Integer maxPart = Integer.parseInt(request.getParameter("maxPart"));
+		Integer duration;
+		Integer maxPart;
+		
+		try {
+			duration = Integer.parseInt(request.getParameter("duration"));
+			maxPart = Integer.parseInt(request.getParameter("maxPart"));
+		} catch (NumberFormatException e){
+			System.out.println("Sono nella numberformatexception");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write("Invalid data");
+			return;
+		}
 		
 		MeetingForm meetF = new MeetingForm(title,startDate,startTime,duration,maxPart);
+		System.out.println("ho creato il meeting form");
 		
 		//the first half is done
 		if (meetF.isValid()) {
+			System.out.println("il meeting form è valido");
+
 			session.setAttribute("attempt", 1);	// salvare anche lato Client (sessionStorage)
 			session.setAttribute("meetF", meetF);
 			
@@ -94,9 +107,11 @@ public class GoToRecordsPage extends HttpServlet {
 			
 			
 		} else {
+			System.out.println("il meeting form è valido");
 			String genErrors = meetF.getErrors();
+			System.out.println(genErrors);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println(genErrors);
+			response.getWriter().write(genErrors);
 			return;
 		}
 

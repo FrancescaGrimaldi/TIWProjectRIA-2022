@@ -115,6 +115,7 @@ public class MeetingForm {
 			this.time = dc.fromStrToTime(time);
 
 				// if date == today's date, checks if time is in the past
+				// per evitare le eccezioni basta mettere forse un if dc == null { invalid date }
 				if (dc.isToday(this.date) && dc.isPastTime(this.time)) {
 					this.timeError = "Time cannot be in the past.";
 				} else {
@@ -191,10 +192,10 @@ public class MeetingForm {
 		String error = " ";
 
 		if(titleError!=null) error=error.concat(titleError+" ");
-		if(dateError!=null) error=error.concat(timeError+" ");
-		if(timeError!=null) error=error.concat(titleError+" ");
-		if(durationError!=null) error=error.concat(timeError+" ");
-		if(maxPartError!=null) error=error.concat(titleError+" ");
+		if(dateError!=null) error=error.concat(dateError+" ");
+		if(timeError!=null) error=error.concat(timeError+" ");
+		if(durationError!=null) error=error.concat(durationError+" ");
+		if(maxPartError!=null) error=error.concat(maxPartError+" ");
 
 		return error;
 	}

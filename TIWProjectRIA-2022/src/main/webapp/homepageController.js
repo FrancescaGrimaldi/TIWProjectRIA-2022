@@ -248,7 +248,7 @@
 								if (next) next();
 
 							} else if (req.status == 400) {
-								self.alert.textContent = message;
+								document.getElementById("genericMeetingError").textContent = message;
 							} else if (req.status == 401) {
 								window.location.href = "index.html";
 							} else if (req.status == 403) {
@@ -415,7 +415,8 @@
 			}
 	});
 	
-	cancelButton.addEventListener('click', () => {
+	cancelButton.addEventListener('click', (e) => {
+		e.preventDefault();
 		backToHomepage();
 	});
 	

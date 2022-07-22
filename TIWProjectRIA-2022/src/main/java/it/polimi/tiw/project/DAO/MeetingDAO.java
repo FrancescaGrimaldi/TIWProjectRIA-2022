@@ -39,7 +39,7 @@ public class MeetingDAO {
 	public List<Meeting> findCreatedMeetings(User u) throws SQLException {
 		List<Meeting> meetings = new ArrayList<>();
 		
-		String query = "SELECT * FROM meeting WHERE creator = ?";
+		String query = "SELECT * FROM meeting WHERE creator = ? AND addtime(date,time)>now()";
 		try(PreparedStatement pstat = connection.prepareStatement(query)) {
 			pstat.setInt(1, u.getID());
 			try(ResultSet result = pstat.executeQuery()){
@@ -71,7 +71,8 @@ public class MeetingDAO {
 		List<Meeting> meetings = new ArrayList<>();
 		DateChecker dc = new DateChecker();
 		
-		String query = "SELECT * FROM meeting M JOIN participation P on M.meetingID = P.meetingID WHERE P.participantID = ?";
+		String query = "SELECT * FROM meeting M JOIN participation P on M.meetingID = P.meetingID WHERE P.participantID = ? AND addtime(date,time)>now()";
+
 		try(PreparedStatement pstat = connection.prepareStatement(query)){
 			pstat.setInt(1, u.getID());
 			try(ResultSet result = pstat.executeQuery()){
@@ -89,13 +90,16 @@ public class MeetingDAO {
 			}
 		}
 		
+		/*
 		//removing the meetings started in the past
 		//check date and time+duration
 		for(Meeting m : meetings) {
+			System.out.println("\nmeeting: "+m);
 			if(dc.isPastDate(m.getDate()) || (dc.isToday(m.getDate()) && dc.isPastTime(m.getTime())) ) {
 				meetings.remove(m);
 			}
 		}
+		*/
 		
 		return meetings;
 	}

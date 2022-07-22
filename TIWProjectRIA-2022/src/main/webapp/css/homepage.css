@@ -2,6 +2,10 @@
 	box-sizing: border-box;
 }
 
+.body {
+	background-image: linear-gradient(#f2edff, #E4C1F9);
+}
+
 .modal-container {
 	background-color: rgba(0, 0, 0, 0.3);
 	align-items: center;
