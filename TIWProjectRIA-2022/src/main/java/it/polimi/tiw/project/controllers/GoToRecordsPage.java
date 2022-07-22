@@ -70,13 +70,11 @@ public class GoToRecordsPage extends HttpServlet {
 		
 		//the first half is done
 		if (meetF.isValid()) {
-			//redirect to the RecordsPage.html to select participants
 			session.setAttribute("attempt", 1);	// salvare anche lato Client (sessionStorage)
 			session.setAttribute("meetF", meetF);
 			
 			UserDAO uDAO = new UserDAO(connection);
 			List<User> rUsers = new ArrayList<>();
-			List<User> sUsers = new ArrayList<>(); //this will be used to contain selected users in a single attempt
 			
 			try {
 				rUsers = uDAO.getRegisteredUsers();
@@ -84,17 +82,15 @@ public class GoToRecordsPage extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Issue with DB");
 				return;
 			}
-			
+
 			Gson gson = new GsonBuilder().create();
 	        String rUsersJson = gson.toJson(rUsers);
-	        String sUsersJson = gson.toJson(sUsers);
-	        String attemptJson = gson.toJson(1);
+
+			System.out.println(rUsersJson);
 
 			response.setContentType("application/json");
 	        response.setCharacterEncoding("UTF-8");
-	        response.getWriter().write(rUsersJson);
-	        response.getWriter().write(sUsersJson);
-	        response.getWriter().write(attemptJson);
+	        response.getWriter().append(rUsersJson);
 	        
 			response.setStatus(HttpServletResponse.SC_OK);
 			

@@ -213,6 +213,7 @@
 		};
 
 		this.show = function(next) {
+
 			const self = this;
 			if (this.form.checkValidity()) {
 				makeCall("POST", "GoToRecordsPage", this.form,
@@ -220,9 +221,9 @@
 						if (req.readyState == 4) {
 							let message = req.responseText;
 							if (req.status == 200) {
-								var rUsers = JSON.parse(req.responseText.rUsersJson);
-								var sUsers = JSON.parse(req.responseText.sUsersJson);
-								var attempt = JSON.parse(req.responseText.attemptJson);
+								var rUsers = JSON.parse(req.responseText);
+								var sUsers = [];
+								var attempt = 1;
 								var toDeselect = 0;
 
 								sessionStorage.setItem("attempt", attempt);
@@ -271,11 +272,11 @@
 
 			this.place.innerHTML = "";
 			
-			if (this.toDeselect == 0)
+			/*if (this.toDeselect == 0)
 				document.getElementById("errorUsersArea").textContext("This is your attempt number " + this.attempt);
 			if (this.toDeselect > 0)
 				document.getElementById("errorUsersArea").textContext("This is your attempt number " + this.attempt +
-					". You need to deselect at least " + this.toDeselect + " people.");
+					". You need to deselect at least " + this.toDeselect + " people.");*/
 
 			for (var i = 0; i < tabFields.length; i++) {
 				th = document.createElement("th"); 				//column
@@ -285,20 +286,20 @@
 			}
 			this.usersTable.appendChild(tr);
 
-
-			this.usersTable.forEach(function(user) {		// 'this' is not visible here, 'self' is
+			this.rUsers.forEach(function(user) {		// 'this' is not visible here, 'self' is
 				tr = document.createElement("tr");
 
-				td1 = document.createElement("td");
+				td1 = document.createElement("input");
 				td2 = document.createElement("td");
 				td3 = document.createElement("td");
 				td4 = document.createElement("td");
 				td5 = document.createElement("td");
 
 				td1.type = "checkbox";
-				td1.name = id;
+				td1.name = "id";
 				td1.value = user.username;
-				td1.checked = sUsers.contains(user.username) && sUsers != null;
+				td1.checked = self.sUsers != null && self.sUsers.includes(user.username);
+
 
 				td2.textContent = user.username;
 				td3.textContent = user.email;
@@ -344,11 +345,23 @@
 	const cancelModalButtons = document.querySelectorAll('[data-cancel-button]');
 	const submitModalButtons = document.querySelectorAll('[data-submit-button]');
 	const overlay = document.getElementById('overlay');
+	
+	document.getElementById("createMeetingButton").addEventListener('click', (e) => {
+		e.preventDefault();
+		var form = e.target.closest("form");
 
-	openModalButtons.forEach(button => {
+		var registeredUsers = new RegisteredUsers(
+			document.getElementById("errorUsersArea"),
+			document.getElementById("usersArea"),
+			form);
+		registeredUsers.show();
+	});
+
+	/*openModalButtons.forEach(button => {
 		button.addEventListener('click', (e) => {
-			e.preventDefault();
+			// e.preventDefault();
 			var form = e.target.closest("form");
+			//document.write("	sto aggiungendo il listener su submit1 meeting");
 
 			var registeredUsers = new RegisteredUsers(
 				document.getElementById("errorUsersArea"),
@@ -356,9 +369,57 @@
 				form);
 			registeredUsers.show();
 		})
-	})
+	})*/
+	
+	document.getElementById("inviteButton").addEventListener('click', (e) => {
+		e.preventDefault();
+			var form = e.target.closest("form");
+			if (form.checkValidity()) {
+				makeCall("POST", "InvitePeople", e.target.closest("form"), function(req) {
+					if (req.readyState == XMLHttpRequest.DONE) {
+						var message = req.responseText;
+						switch (req.status) {
+							case 200:
+								document.write("Sono nel case 200 di invite ppl")
+								sessionStorage.removeItem("attempt");
+								closeModal(button.closest('.modal'));
+								
+								createdMeeting.show();
+								invitedMeeting.show();
+								break;
+								
+							case 202:
+								document.write("Sono nel case 202 di invite ppl")
+								document.write("rusers =" + rUsers)
+								//rUsers = JSON.parse(req.responseText.rUsersJson);
+								sUsers = JSON.parse(req.responseText.sUsersJson);
+								document.write("\nsusers = " + sUsers)
+								//attempt = JSON.parse(req.responseText.attemptJson);
+								attempt = session.getAttribute("attempt") + 1;
+								toDeselect = sUsers.length - form.elements['maxPart'];
+								
+								sessionStorage.setItem("attempt", attempt);
+								registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
+								break;
+								
+							case 400: // bad request
+								sessionStorage.removeItem("attempt");
+								closeModal(button.closest('.modal'));
+								break;
+								
+							case 502: // server error
+								alert(message);
+								closeModal(button.closest('.modal'));
+								break;
+						}
+					}
+				}, false);
+			} else {
+				form.reportValidity();
+			}
+	});
 
-	submitModalButtons.forEach(button => {
+	/*submitModalButtons.forEach(button => {
 		button.addEventListener('click', (e) => {
 			e.preventDefault();
 			var form = e.target.closest("form");
@@ -382,10 +443,7 @@
 								toDeselect = JSON.parse(req.responseText.toDeselectJson);
 								
 								sessionStorage.setItem("attempt", attempt);
-
-							
 								registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
-								
 								break;
 								
 							case 400: // bad request
@@ -403,20 +461,24 @@
 			} else {
 				form.reportValidity();
 			}
-			// if servlet
-			//else
-
-			closeModal(button.closest('.modal'));
 		})
-	})
+	})*/
+	
+	document.getElementById("cancelButton").addEventListener('click', (e) => {
+		const modal = button.closest('.modal');
+			//svuota tutto e poi
+			closeModal(modal);
+	});
+	
+	
 
-	cancelModalButtons.forEach(button => {
+	/*cancelModalButtons.forEach(button => {
 		button.addEventListener('click', (e) => {
 			const modal = button.closest('.modal');
 			//svuota tutto e poi
 			closeModal(modal);
 		})
-	})
+	})*/
 
 
 	function openModal(modal) {

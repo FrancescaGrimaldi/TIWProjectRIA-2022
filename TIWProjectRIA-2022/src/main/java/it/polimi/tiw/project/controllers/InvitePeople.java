@@ -19,8 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import it.polimi.tiw.project.DAO.MeetingDAO;
-import it.polimi.tiw.project.DAO.UserDAO;
-import it.polimi.tiw.project.beans.User;
 import it.polimi.tiw.project.utilities.ConnectionHandler;
 import it.polimi.tiw.project.utilities.MeetingForm;
 
@@ -100,35 +98,21 @@ public class InvitePeople extends HttpServlet {
 				int attempt = (int)session.getAttribute("attempt")+1;
 				session.setAttribute("attempt", attempt);
 				
-				UserDAO uDAO = new UserDAO(connection);
-				List<User> rUsers = new ArrayList<>();
 				List<String> sUsers = new ArrayList<>();
-				
-				try {
-					rUsers = uDAO.getRegisteredUsers();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 				
 				//checkbox
 				for(String s : sUsernames) {
 					sUsers.add(s);
 				}
 				
-				int toDeselect = sUsernames.length-maxPart;
+				// int toDeselect = sUsernames.length-maxPart;
 				
 				Gson gson = new GsonBuilder().create();
-		        String rUsersJson = gson.toJson(rUsers);
 		        String sUsersJson = gson.toJson(sUsers);
-		        String toDeselectJson = gson.toJson(toDeselect);
-		        String attemptJson = gson.toJson(attempt);
 
 				response.setContentType("application/json");
 		        response.setCharacterEncoding("UTF-8");
-		        response.getWriter().write(rUsersJson);
 		        response.getWriter().write(sUsersJson);
-		        response.getWriter().write(toDeselectJson);
-		        response.getWriter().write(attemptJson);
 		        
 		        response.setStatus(HttpServletResponse.SC_ACCEPTED);
 			}
