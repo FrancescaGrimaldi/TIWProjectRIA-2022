@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html class="back">
+<html class="background">
 <head>
 	<meta charset="ISO-8859-1">
 	<title>Sign up</title>
 	<link rel="icon" type="image/png" href="favicon.png">
 	<link rel="stylesheet" type="text/css" media="all" href="./css/homepage.css">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 	<script src="signUpController.js" charset="utf-8" defer></script>
 	<script src="utils.js" charset="utf-8" defer></script>
 </head>
@@ -17,39 +18,39 @@
 	</div>
 
 	<h1 class="text">We're glad you want to join us!</h1>
-	<h2 style="margin-bottom:40px" class="text">Complete the following form to sign up:</h2>
+	<h3 style="margin-bottom:40px" class="text">Complete the following form to sign up:</h3>
 
-	<form action="#" class="text">
+	<form action="#" class="form">
 		
 			<p>
-				Username: <input class="input" name="username" required maxlength="50" />
+				Username:<input class="newInput" name="username" required maxlength="50" />
 			</p>
 			<p>
-				Email: <input class="input" type="email" name="email" required maxlength="100" />
-				<p class="warning" id="emailError"> </p>
+				Email:<input class="newInput" type="email" name="email" required maxlength="100" />
+				<p class="warning" style="text-align:right" id="emailError"> </p>
 			<p>
-				Password: <input class="input" type="password" name="password" required
+				Password:<input class="newInput" type="password" name="password" required
 					maxlength="50" id="first_input" />
 			</p>
 			<p>
-				Confirm password: <input class="input" type="password" name="password2" required
+				Confirm password:<input class="newInput" type="password" name="password2" required
 					maxlength="50" id="second_input" />
 			</p>
 				<p class="warning" id="passwordError"> </p>
 			<p>
-				Name: <input class="input" type="text" name="name" required maxlength="50" />
+				Name:<input class="newInput" type="text" name="name" required maxlength="50" />
 			</p>
 			<p>
-				Surname: <input class="input" type="text" name="surname" required maxlength="50" />
+				Surname:<input class="newInput" type="text" name="surname" required maxlength="50" />
 			</p>
 			<p>
-				Age: <input class="input" type="number" name="age" required min="5" max="123" />
+				Age:<input class="newInput" type="number" name="age" required min="5" max="123" />
 			</p>
 			<p>
-				City: <input class="input" name="city" required maxlength="50" />
+				City:<input class="newInput" name="city" required maxlength="50" />
 			</p>
 
-			<input class="signUpButton" type="submit" name="Signup" id="subscribeButton">
+			<input class="signUpButton" style="margin:0 50; transform: translate(-50%, 0px)" type="submit" name="Signup" id="subscribeButton">
 		
 	</form>
 	

@@ -1,62 +1,70 @@
 <!DOCTYPE html>
-<html class="back">
+<html class="background">
 <head>
-<meta charset="ISO-8859-1">
-<title>Home: create your meeting</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" type="text/css" media="all" href="./css/homepage.css">
-<script src="homepageController.js" charset="utf-8" defer></script>
-<script src="utils.js" charset="utf-8" defer></script>
+	<meta charset="ISO-8859-1">
+	<title>Home: create your meeting</title>
+	<link rel="icon" type="image/png" href="favicon.png">
+	<link rel="stylesheet" type="text/css" media="all" href="./css/homepage.css">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+	<script src="homepageController.js" charset="utf-8" defer></script>
+	<script src="utils.js" charset="utf-8" defer></script>
 </head>
 
 <body>
 	<div align="right">
 		<form method="POST" action="Logout">
-			<button class="cancel-button" style="margin:10px" type="submit" id="logoutButton">Logout</button>
+			<button class="cancel-button" style="margin: 10px" type="submit" id="logoutButton">Logout</button>
 		</form>
 	</div>
+	
 	<h1 class="text">Welcome to your home page!</h1>
 	<p class="welcome" id="welcomeMessage"></p>
+
+	<hr style="margin: 30px 40px 20px"></hr>
 
 	<h2 class="text">Meetings created:</h2>
 	<div>
 		<span id="createdMeetingArea"></span>
 	</div>
-	<div style="text-align:center; margin-bottom:20px">
+	<div style="text-align: center; margin-bottom: 20px">
 		<span class="text" id="voidCMeetingArea"></span>
 	</div>
+
+	<hr style="margin: 40px"></hr>
 
 	<h2 class="text">Meetings you are invited to:</h2>
 	<div>
 		<span id="invitedMeetingArea"></span>
 	</div>
-	<div style="text-align:center; margin-bottom:20px">
+	<div style="text-align: center; margin-bottom: 20px">
 		<span class="text" id="voidIMeetingArea"></span>
 	</div>
 
-	<hr style="margin:40px"></hr>
-	
+	<hr style="margin: 40px"></hr>
+
 	<div class="text">
 		<h2>Complete the form to create a meeting</h2>
-		<form action="#" id="meetingForm">
+		<form action="#" class="meetingForm" id="meetingForm">
 			<p>
 				Title: <input class="input" type="text" name="title" required />
 			</p>
 			<p>
-				Date: <input class="input"type="date" name="date" id="datefield"
+				Date: <input class="input" type="date" name="date" id="datefield"
 						min="2022-07-01" placeholder="yyyy-MM-dd" required />
 			</p>
 			<p>
-				Time: <input class="input"type="time" name="time" placeholder="hh:mm" required />
+				Time: <input class="input" type="time" name="time" placeholder="hh:mm" required />
 			</p>
 			<p>
-				Duration (in minutes): <input class="input" type="number" name="duration" min=1 required />
+				Duration <i>(in minutes)</i> : <input class="input" type="number" name="duration" min=1 max=720 required />
 			</p>
 			<p>
-				Maximum number of participants: <input class="input" type="number" name="maxPart" id="maxPart" min=1 required />
+				Maximum number of participants: <input class="input" type="number"
+						name="maxPart" id="maxPart" min=1 max=50 required />
 			</p>
 
-			<button class="button" type="submit" name="createMeetingButton" id="createMeetingButton">Create Meeting</button>
+			<button class="button" type="submit" name="createMeetingButton" id="createMeetingButton"
+					style="transform: translate(-20%, 0px)" >Create Meeting</button>
 		</form>
 
 		<div class="modal-container" id="modal-container">
@@ -68,16 +76,16 @@
 					<div>
 						<span id="usersArea"></span>
 					</div>
-					<button style="margin-right:10px" class="button" class="submit-button" id="inviteButton">Invite</button>
-					<button style="margin-left:10px"class="cancel-button" id="cancelButton">Cancel</button>
+					<button style="margin-right: 20px" class="button" class="submit-button" id="inviteButton">Invite</button>
+					<button style="margin-left: 20px" class="cancel-button" id="cancelButton">Cancel</button>
 				</form>
 			</div>
 		</div>
 
 		<p class="warning" id="genericMeetingError"></p>
 	</div>
-	
-	<hr style="margin:40px"></hr>
+
+	<hr style="margin: 20px 40px 40px"></hr>
 
 </body>
 </html>

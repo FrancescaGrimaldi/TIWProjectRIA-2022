@@ -19,7 +19,7 @@
 	function WelcomeMessage(_username, messagecontainer) {
 		this.username = _username;
 		this.show = function() {
-			messagecontainer.textContent = "Welcome back, " + this.username;
+			messagecontainer.textContent = "Nice to see you again, " + this.username;
 		}
 	}
 
@@ -243,7 +243,6 @@
 								self.update(rUsers, sUsers, attempt, toDeselect, usersTable); // self visible by closure
 
 								modal_container.classList.add("show");
-								//document.write(modal_container.classList.contains("show"));
 
 								if (next) next();
 
@@ -279,12 +278,6 @@
 			let td1, td2, td3, td4, td5;
 
 			this.place.innerHTML = "";
-			
-			/*if (this.toDeselect == 0)
-				document.getElementById("errorUsersArea").textContext("This is your attempt number " + this.attempt);
-			if (this.toDeselect > 0)
-				document.getElementById("errorUsersArea").textContext("This is your attempt number " + this.attempt +
-					". You need to deselect at least " + this.toDeselect + " people.");*/
 
 			for (var i = 0; i < tabFields.length; i++) {
 				th = document.createElement("th"); 				//column
@@ -391,17 +384,23 @@
 								toDeselect = sUsers.length - maxPart;
 								
 								sessionStorage.setItem("attempt", attempt);
-								document.getElementById("errorUsersArea").textContent =
-									("This is your attempt number " + attempt + ".\n You have to de-select " + toDeselect + " people.");
+								
+								if (attempt == 2) 
+									document.getElementById("errorUsersArea").textContent =
+									("This is your attempt number " + attempt + ". You need to de-select " + toDeselect + " user(s)");
+								if (attempt == 3)
+									document.getElementById("errorUsersArea").textContent =
+										("This is your attempt number " + attempt +
+										 ". You need to de-select " + toDeselect + " user(s)" +
+										 ". Be careful because this is the last one!");
+										 
 								registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
 								break;
 								
 							case 400: // bad request
-								//document.write("servlet errore 400");
-								alert("You have try too hard. This meeting is impossible to create. " + 
-									"Sending you to the homepage");
+								alert("Too many attempts have been done trying to create a meeting with too many participants! " +
+									  "It won't be created. You will be redirected to the Homepage");
 								backToHomepage();
-								
 								break;
 								
 							case 502: // server error
@@ -439,7 +438,7 @@
 		this.start = function() {
 
 			// init welcome message
-			welcomeMessage = new WelcomeMessage(sessionStorage.getItem("username"), document.getElementById("welcomeMessage"));
+			let welcomeMessage = new WelcomeMessage(sessionStorage.getItem("username"), document.getElementById("welcomeMessage"));
 			welcomeMessage.show();
 
 			// handles logout

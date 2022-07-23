@@ -32,24 +32,24 @@
 
 	})
 
-	document.querySelector("input[name='email']").addEventListener("blur", function(e) {
-		var mail = this.value
+	document.querySelector("input[name='email']").addEventListener("blur", function() {
+		var mail = this.value;
 		
 		if (!mail.includes(".") || !mail.includes("@")) {
-			document.getElementById("emailError").textContent = "Email format is example@mail.com."
+			document.getElementById("emailError").textContent = "Email format is example@mail.com";
 		} else {
-			document.getElementById("emailError").textContent = ""
+			document.getElementById("emailError").textContent = "";
 		}
 	})
 	
-	document.querySelector("input[name='password2']").addEventListener("blur", function(e) {
+	document.querySelector("input[name='password2']").addEventListener("blur", function() {
 		var pass1 = document.querySelector("input[name='password']").value;
 		var pass2 = this.value;
 		
 		if (pass1 != pass2) {
-			document.getElementById("passwordError").textContent = "Passwords do not match."
+			document.getElementById("passwordError").textContent = "Passwords do not match";
 		} else {
-			document.getElementById("passwordError").textContent = ""
+			document.getElementById("passwordError").textContent = "";
 		}
 	})
 
