@@ -22,29 +22,38 @@ import it.polimi.tiw.project.DAO.MeetingDAO;
 import it.polimi.tiw.project.beans.Meeting;
 import it.polimi.tiw.project.beans.User;
 
+/**
+ * This servlet gets the created meetings from the database.
+ */
 @WebServlet("/GetCreatedMeetings")
 @MultipartConfig
 public class GetCreatedMeetings extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
 
-	
+	/**
+	 * Class constructor.
+	 */
 	public GetCreatedMeetings() {
 		super();
 	}
 
 	
+	/**
+	 * Initializes the connection to the database.
+	 */
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 	
-	
+	/**
+	 * Gets created meetings to display to the specific user.
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		// If the user is not logged in (not present in session) redirect to the login
 		HttpSession session = request.getSession();
 		
+		//send status code 400 if the user is not logged in
 		if (session.isNew() || session.getAttribute("user") == null) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Incorrect param values");
@@ -53,10 +62,9 @@ public class GetCreatedMeetings extends HttpServlet {
 		
 		User u = (User)session.getAttribute("user");
 		MeetingDAO mDAO = new MeetingDAO(connection);
-		
+
 		List<Meeting> cMeetings = new ArrayList<>();
 		
-		//there is a problem for which if there are no created or invited meetings, homepage doesn't display
 		try {
 			cMeetings = mDAO.findCreatedMeetings(u);
 		} catch (SQLException e) {
@@ -65,7 +73,7 @@ public class GetCreatedMeetings extends HttpServlet {
 			return;
 		}
 
-		// Refresh and add meetings to the parameters
+		//send the created meetings as json 
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         String cMeetingsJson = gson.toJson(cMeetings);
 
@@ -76,19 +84,22 @@ public class GetCreatedMeetings extends HttpServlet {
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doGet(request, response);
-	}
-	
-	
+
+	/**
+	 * Closes the connection to the database.
+	 */
 	public void destroy() {
 		try {
 			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
 	}
 	
 }

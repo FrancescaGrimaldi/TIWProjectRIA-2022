@@ -93,6 +93,7 @@ public class Meeting {
 		return creatorUsername;
 	}
 	
+	
 	public String toString() {
 		StringBuffer buff = new StringBuffer("Meeting");
 		

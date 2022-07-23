@@ -4,7 +4,7 @@
 	<meta charset="ISO-8859-1">
 	<title>Home: create your meeting</title>
 	<link rel="icon" type="image/png" href="favicon.png">
-	<link rel="stylesheet" type="text/css" media="all" href="./css/homepage.css">
+	<link rel="stylesheet" type="text/css" media="all" href="./css/website.css">
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 	<script src="homepageController.js" charset="utf-8" defer></script>
 	<script src="utils.js" charset="utf-8" defer></script>
@@ -63,8 +63,7 @@
 						name="maxPart" id="maxPart" min=1 max=50 required />
 			</p>
 
-			<button class="button" type="submit" name="createMeetingButton" id="createMeetingButton"
-					style="transform: translate(-20%, 0px)" >Create Meeting</button>
+			<button class="button" type="submit" name="createMeetingButton" id="createMeetingButton">Create Meeting</button>
 		</form>
 
 		<div class="modal-container" id="modal-container">
@@ -76,8 +75,10 @@
 					<div>
 						<span id="usersArea"></span>
 					</div>
-					<button style="margin-right: 20px" class="button" class="submit-button" id="inviteButton">Invite</button>
-					<button style="margin-left: 20px" class="cancel-button" id="cancelButton">Cancel</button>
+					<div class="sticky">
+						<button class="button" class="submit-button" id="inviteButton">Invite</button>
+						<button class="cancel-button" id="cancelButton">Cancel</button>
+					</div>
 				</form>
 			</div>
 		</div>

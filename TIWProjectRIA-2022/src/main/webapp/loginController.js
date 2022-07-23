@@ -1,17 +1,15 @@
 /**
  * Login management
  */
-
 (function() { // avoid variables ending up in the global scope
-
     document.getElementById("loginbutton").addEventListener('click', (e) => {
         var form = e.target.closest("form");
         if (form.checkValidity()) {
             makeCall("POST", 'CheckLogin', e.target.closest("form"),
-                function(x) {
-                    if (x.readyState == XMLHttpRequest.DONE) {
-                        var message = x.responseText;
-                        switch (x.status) {
+                function(req) {
+                    if (req.readyState == XMLHttpRequest.DONE) {
+                        var message = req.responseText;
+                        switch (req.status) {
                             case 200:
                                 sessionStorage.setItem("username", message); //mette username nella sessione
                                 window.location.href = "Homepage.html";
@@ -34,11 +32,12 @@
         }
     });
 
+    //shows a message stating that the registration on the website was successful
 	window.onload = () => {
-		var x = sessionStorage.getItem("regSuccessful");
-		if (x != null) {
+		var reg = sessionStorage.getItem("regSuccessful");
+		if (reg != null) {
 			sessionStorage.removeItem("regSuccessful");
-			document.getElementById("registration").textContent = x;
+			document.getElementById("registration").textContent = reg;
 		}
 	}
 

@@ -4,7 +4,7 @@
 	<meta charset="ISO-8859-1">
 	<title>Sign up</title>
 	<link rel="icon" type="image/png" href="favicon.png">
-	<link rel="stylesheet" type="text/css" media="all" href="./css/homepage.css">
+	<link rel="stylesheet" type="text/css" media="all" href="./css/website.css">
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 	<script src="signUpController.js" charset="utf-8" defer></script>
 	<script src="utils.js" charset="utf-8" defer></script>
@@ -24,6 +24,7 @@
 		
 			<p>
 				Username:<input class="newInput" name="username" required maxlength="50" />
+				<p class="warning" style="text-align:right" id="chosenUsernameError"> </p>
 			</p>
 			<p>
 				Email:<input class="newInput" type="email" name="email" required maxlength="100" />
@@ -36,7 +37,7 @@
 				Confirm password:<input class="newInput" type="password" name="password2" required
 					maxlength="50" id="second_input" />
 			</p>
-				<p class="warning" id="passwordError"> </p>
+				<p class="warning" style="text-align:right" id="passwordError"> </p>
 			<p>
 				Name:<input class="newInput" type="text" name="name" required maxlength="50" />
 			</p>
@@ -54,8 +55,7 @@
 		
 	</form>
 	
-	<p class="warning" id="chosenUsernameError"> </p>
-	<p class="warning" id="genericErrors"> </p>
+	<p class="warning" style="text-align:right" id="genericErrors"> </p>
 	
 </body>
 </html>

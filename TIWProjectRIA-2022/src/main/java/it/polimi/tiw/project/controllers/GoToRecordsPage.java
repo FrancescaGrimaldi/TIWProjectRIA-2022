@@ -23,31 +23,38 @@ import it.polimi.tiw.project.beans.User;
 import it.polimi.tiw.project.utilities.ConnectionHandler;
 import it.polimi.tiw.project.utilities.MeetingForm;
 
+/**
+ * This servlet manages the meeting form validation and
+ * the first access to the records page.
+ */
 @WebServlet("/GoToRecordsPage")
 @MultipartConfig
 public class GoToRecordsPage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
 
+	/**
+	 * Class constructor.
+	 */
 	public GoToRecordsPage() {
 		super();
 	}
 
 	
+	/**
+	 * Initializes the connection to the database.
+	 */
 	public void init() throws ServletException {
 		ServletContext servletContext = getServletContext();
 		
 		connection = ConnectionHandler.getConnection(servletContext);
-		
 	}
 	
-	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doPost(request, response);
-	}
 
-
+	/**
+	 * Checks the validity of the meeting form. If valid, sends status code 200
+	 * sends errors otherwise.
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// If the user is not logged in (not present in session) redirect to the login
@@ -63,27 +70,24 @@ public class GoToRecordsPage extends HttpServlet {
 		String title = request.getParameter("title");
 		String startDate = request.getParameter("date");
 		String startTime  = request.getParameter("time");
-		Integer duration;
-		Integer maxPart;
+		Integer duration = 0;
+		Integer maxPart = 0;
 		
 		try {
 			duration = Integer.parseInt(request.getParameter("duration"));
 			maxPart = Integer.parseInt(request.getParameter("maxPart"));
 		} catch (NumberFormatException e){
-			System.out.println("Sono nella numberformatexception");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().write("Invalid data");
 			return;
 		}
 		
-		MeetingForm meetF = new MeetingForm(title,startDate,startTime,duration,maxPart);
-		System.out.println("ho creato il meeting form");
+		MeetingForm meetF = new MeetingForm(title, startDate, startTime, duration, maxPart);
 		
 		//the first half is done
 		if (meetF.isValid()) {
-			System.out.println("il meeting form è valido");
-
-			session.setAttribute("attempt", 1);	// salvare anche lato Client (sessionStorage)
+			//meeting creation can proceed selecting participants
+			session.setAttribute("attempt", 1);
 			session.setAttribute("meetF", meetF);
 			
 			UserDAO uDAO = new UserDAO(connection);
@@ -96,6 +100,7 @@ public class GoToRecordsPage extends HttpServlet {
 				return;
 			}
 
+			//sending registered users as json
 			Gson gson = new GsonBuilder().create();
 	        String rUsersJson = gson.toJson(rUsers);
 
@@ -105,9 +110,8 @@ public class GoToRecordsPage extends HttpServlet {
 	        
 			response.setStatus(HttpServletResponse.SC_OK);
 			
-			
 		} else {
-			System.out.println("il meeting form è valido");
+			//display the format errors
 			String genErrors = meetF.getErrors();
 			System.out.println(genErrors);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -118,6 +122,9 @@ public class GoToRecordsPage extends HttpServlet {
 	}
 
 	
+	/**
+	 * Closes the connection to the database.
+	 */
 	public void destroy() {
 		try {
 			ConnectionHandler.closeConnection(connection);
@@ -126,4 +133,10 @@ public class GoToRecordsPage extends HttpServlet {
 		}
 	}
 	
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
 }

@@ -17,29 +17,38 @@ import it.polimi.tiw.project.DAO.UserDAO;
 import it.polimi.tiw.project.beans.User;
 import it.polimi.tiw.project.utilities.ConnectionHandler;
 
+/**
+ * This servlet controls the login.
+ */
 @WebServlet("/CheckLogin")
 @MultipartConfig
 public class CheckLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
 
+	/**
+	 * Class constructor.
+	 */
 	public CheckLogin() {
 		super();
 	}
 
+
+	/**
+	 * Initializes the connection to the database.
+	 */
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doPost(request, response);
-	}
 
+	/**
+	 * Checks the validity of the inserted username and password and authenticates
+	 * the user (querying the db), sending a different status code based on the 
+	 * specific situation.
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		// obtain and escape params
 		String usrn = null;
 		String pwd = null;
 
@@ -47,34 +56,33 @@ public class CheckLogin extends HttpServlet {
 			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
 			pwd = StringEscapeUtils.escapeJava(request.getParameter("password"));
 
-			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
+			if (isInvalid(usrn) || isInvalid(pwd)) {
 				throw new Exception("Missing or empty credential value");
 			}
 
 		} catch (Exception e) {
-			// for debugging only e.printStackTrace();
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Missing or empty credential value");
 			return;
 		}
 
-		// query db to authenticate for user
+		//authenticate for user
 		UserDAO uDAO = new UserDAO(connection);
 		User u = null;
 
 		try {
-			u = uDAO.checkCredentials(usrn, pwd);
+			u = uDAO.checkCredentials(usrn, pwd);		//returns User u || null
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossible to check credentials");
 			return;
 		}
 
-		// If the user exists, add info to the session and go to home page,
-		// otherwise show login page with error message
 		if (u == null) {
+			//if the user does not exist, send status code 401
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().println("Incorrect credentials");
 		} else {
+			//if the user exists, add info to the session and send status code 200 with the username
 			request.getSession().setAttribute("user", u);
 			request.getSession().setAttribute("user.username", u.getUsername());
 			response.setContentType("application/json");
@@ -85,12 +93,39 @@ public class CheckLogin extends HttpServlet {
 
 	}
 
+
+	/**
+	 * Checks whether the given string is null or empty.
+	 * Used in {@link #doPost(HttpServletRequest, HttpServletResponse) doPost}
+	 * to check if the credentials are valid.
+	 * @param str		the String to check.
+	 * @return			a boolean whose value is:
+	 * 					<p>
+	 * 					-{@code true} if it's incorrect;
+	 * 					</p> <p>
+	 * 					-{@code false} otherwise.
+	 * 					</p>
+	 */
+	private boolean isInvalid(String str) {
+		return ( str==null || str.isEmpty() );
+	}
+
+
+	/**
+	 * Closes the connection to the database.
+	 */
 	public void destroy() {
 		try {
 			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
 	}
 
 }

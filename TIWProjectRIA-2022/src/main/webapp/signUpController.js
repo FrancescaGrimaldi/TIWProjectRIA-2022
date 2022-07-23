@@ -18,7 +18,10 @@
 							document.getElementById("genericErrors").textContent = message;
 							break;
 						case 406: // username already in use
-							document.getElementById("error").textContent = message;
+							document.getElementById("chosenUsernameError").textContent = message;
+							break;
+						case 500: // server error SQL Exception
+							document.getElementById("genericErrors").textContent = message;
 							break;
 						case 502: // server error
 							alert(message);
@@ -32,6 +35,7 @@
 
 	})
 
+	//checks the validity of the email field
 	document.querySelector("input[name='email']").addEventListener("blur", function() {
 		var mail = this.value;
 		
@@ -42,6 +46,7 @@
 		}
 	})
 	
+	//checks whether the password fields match
 	document.querySelector("input[name='password2']").addEventListener("blur", function() {
 		var pass1 = document.querySelector("input[name='password']").value;
 		var pass2 = this.value;

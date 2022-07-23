@@ -43,9 +43,9 @@
 								self.alert.textContent = "You haven't created any meeting";
 								return;
 							}
-
+							
+							self.alert.textContent = "";
 							let meetTable = document.createElement("table");
-							meetTable.border = "1px solid black";
 							self.update(meetingsToShow, meetTable); // self visible by closure
 
 							if (next) next();
@@ -74,7 +74,7 @@
 			this.place.innerHTML = "";
 
 			for (var i = 0; i < tabFields.length; i++) {
-				th = document.createElement("th"); 			//column
+				th = document.createElement("th"); 				//column
 				text = document.createTextNode(tabFields[i]); 	//column title
 				th.appendChild(text);
 				tr.appendChild(th);
@@ -128,13 +128,13 @@
 						let message = req.responseText;
 						if (req.status == 200) {
 							var meetingsToShow = JSON.parse(req.responseText);
-							if (meetingsToShow == null || meetingsToShow.length == 0) {   //check the variable type of meetings
+							if (meetingsToShow == null || meetingsToShow.length == 0) {
 								self.alert.textContent = "You haven't been invited to any meeting";
 								return;
 							}
-
+							
+							self.alert.textContent = "";
 							let meetTable = document.createElement("table");
-							meetTable.border = "1px solid black";
 							self.update(meetingsToShow, meetTable); // self visible by closure
 
 							if (next) next();
@@ -233,13 +233,12 @@
 
 								sessionStorage.setItem("attempt", attempt);
 
-								if (rUsers == null || rUsers.length == 0) {   //check the variable type of meetings
+								if (rUsers == null || rUsers.length == 0) {
 									self.alert.textContent = "Your contact list is empty";
 									return;
 								}
 
 								let usersTable = document.createElement("table");
-								usersTable.border = "1px solid black";
 								self.update(rUsers, sUsers, attempt, toDeselect, usersTable); // self visible by closure
 
 								modal_container.classList.add("show");
@@ -364,14 +363,12 @@
 		e.preventDefault();
 			var form = e.target.closest("form");
 			if (form.checkValidity()) {
-				makeCall("POST", "InvitePeople", e.target.closest("form"), function(req) {
+				makeCall("POST", "InviteToMeeting", e.target.closest("form"), function(req) {
 					if (req.readyState == XMLHttpRequest.DONE) {
 						var message = req.responseText;
 						switch (req.status) {
 							case 200:
-								//document.write("Sono nel case 200 di invite ppl")
 								backToHomepage();
-
 								createdMeeting.show();
 								invitedMeeting.show();
 								break;
@@ -459,11 +456,7 @@
 				document.getElementById("invitedMeetingArea")
 			);
 			invitedMeeting.show();
-
-			//↓ ↓ ↓ ↓ ↓ ↓ ↓   TO ADAPT OR DELETE   ↓ ↓ ↓ ↓ ↓ ↓ ↓
-			/* register folder_form wizard
-			wizard = new Wizard(document.getElementById("create-content"));
-			*/
+			
 		};
 
 		this.refresh = function() {
@@ -471,10 +464,6 @@
 			createdMeeting.reset();
 			invitedMeeting.reset();
 
-			//↓ ↓ ↓ ↓ ↓ ↓ ↓   TO ADAPT OR DELETE   ↓ ↓ ↓ ↓ ↓ ↓ ↓
-			/*documentHandler.reset();
-			folderTree.show(false);
-			wizard.reset();*/
 		};
 	}
 
