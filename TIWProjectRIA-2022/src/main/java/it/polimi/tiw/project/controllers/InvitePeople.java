@@ -59,7 +59,6 @@ public class InvitePeople extends HttpServlet {
 		}
 		
 		if(session.getAttribute("attempt")!=null && (int)session.getAttribute("attempt") <= 3) {
-			//modify checkbox in html and everything related
 			String[] sUsernames = request.getParameterValues("id");
 			
 			MeetingForm meetF = (MeetingForm)session.getAttribute("meetF");
@@ -100,12 +99,9 @@ public class InvitePeople extends HttpServlet {
 				
 				List<String> sUsers = new ArrayList<>();
 				
-				//checkbox
 				for(String s : sUsernames) {
 					sUsers.add(s);
 				}
-				
-				// int toDeselect = sUsernames.length-maxPart;
 				
 				Gson gson = new GsonBuilder().create();
 		        String sUsersJson = gson.toJson(sUsers);
