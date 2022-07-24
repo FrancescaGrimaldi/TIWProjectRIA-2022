@@ -51,7 +51,7 @@ public class InviteToMeeting extends HttpServlet {
 
 
 	/**
-	 * Gets the number and usernames of the users selected as participants for the meeting about to be
+	 * Gets the numbers and usernames of the users selected as participants for the meeting about to be
 	 * created, checks the validity of the information and creates the meeting as soon as the information 
 	 * is complete and correct (in accordance with the number of attempts the user has for making this choice).
 	 */
@@ -97,7 +97,7 @@ public class InviteToMeeting extends HttpServlet {
 				session.removeAttribute("meetF");
 				session.removeAttribute("attempt");
 				
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			} else {
 				//information is not correct but it's not the last attempt for the user

@@ -2,20 +2,21 @@
  * Homepage Management
  */
 
-(function() { // avoid variables ending up in the global scope
-
+(function() {
 	let pageOrchestrator = new PageOrchestrator();
 
 	window.addEventListener("load", () => {
 		if (sessionStorage.getItem("username") == null) {
+			// load index.html if user is not logged in
 			window.location.href = "index.html";
 		} else {
-			pageOrchestrator.start(); // initialize the components
+			// initialize and display the content otherwise
+			pageOrchestrator.start();
 			pageOrchestrator.refresh();
-		} // display initial content
+		}
 	}, false);
 
-
+	// initialize the custom welcome message for the logged user
 	function WelcomeMessage(_username, messagecontainer) {
 		this.username = _username;
 		this.show = function() {
@@ -23,6 +24,7 @@
 		}
 	}
 
+	// get the created and only future meetings created by the logged user
 	function CreatedMeeting(_alert, _place) {
 		this.alert = _alert;
 		this.place = _place;
@@ -33,34 +35,44 @@
 
 		this.show = function(next) {
 			const self = this;
+
+			// call the servlet
 			makeCall("GET", "GetCreatedMeetings", null,
 				function(req) {
 					if (req.readyState == 4) {
 						let message = req.responseText;
-						if (req.status == 200) {
-							var meetingsToShow = JSON.parse(req.responseText);
-							if (meetingsToShow == null || meetingsToShow.length == 0) {   //check the variable type of meetings
-								self.alert.textContent = "You haven't created any meeting";
-								return;
-							}
-							
-							self.alert.textContent = "";
-							let meetTable = document.createElement("table");
-							self.update(meetingsToShow, meetTable); // self visible by closure
+						switch (req.status) {
+							case 200:
+								var meetingsToShow = JSON.parse(req.responseText);
+								if (meetingsToShow == null || meetingsToShow.length == 0) {
+									// there are no created meetings to display
+									self.alert.textContent = "You haven't created any meeting";
+									return;
+								}
 
-							if (next) next();
+								// empty any error and create the table
+								self.alert.textContent = "";
+								let meetTable = document.createElement("table");
+								self.update(meetingsToShow, meetTable); // self visible by closure
 
-						} else if (req.status == 403) {
-							window.sessionStorage.removeItem("username");
-						}
-						else {
-							self.alert.textContent = message;
+								if (next) next();
+
+								break;
+
+							case 403:
+								window.sessionStorage.removeItem("username");
+								break;
+
+							default:
+								self.alert.textContent = message;
+								break;
 						}
 					}
 				}
 			);
 		};
 
+		// function to fill the table given the meeting to show
 		this.update = function(_meetingsToShow, _meetTable) {
 			this.meetingsToShow = _meetingsToShow;
 			this.meetTable = _meetTable;
@@ -73,6 +85,7 @@
 
 			this.place.innerHTML = "";
 
+			// create the table head
 			for (var i = 0; i < tabFields.length; i++) {
 				th = document.createElement("th"); 				//column
 				text = document.createTextNode(tabFields[i]); 	//column title
@@ -81,7 +94,7 @@
 			}
 			this.meetTable.appendChild(tr);
 
-
+			// create each row of the table filling it with the given meeting data
 			this.meetingsToShow.forEach(function(meet) {		// 'this' is not visible here, 'self' is
 				tr = document.createElement("tr");
 
@@ -111,7 +124,7 @@
 		}
 	}
 
-
+	// get the future meetings where the logged user is invited
 	function InvitedMeeting(_alert, _place) {
 		this.alert = _alert;
 		this.place = _place;
@@ -122,34 +135,44 @@
 
 		this.show = function(next) {
 			const self = this;
+
+			// call the servlet
 			makeCall("GET", "GetInvitedMeetings", null,
 				function(req) {
 					if (req.readyState == 4) {
 						let message = req.responseText;
-						if (req.status == 200) {
-							var meetingsToShow = JSON.parse(req.responseText);
-							if (meetingsToShow == null || meetingsToShow.length == 0) {
-								self.alert.textContent = "You haven't been invited to any meeting";
-								return;
-							}
-							
-							self.alert.textContent = "";
-							let meetTable = document.createElement("table");
-							self.update(meetingsToShow, meetTable); // self visible by closure
+						switch (req.status) {
+							case 200:
+								var meetingsToShow = JSON.parse(req.responseText);
+								if (meetingsToShow == null || meetingsToShow.length == 0) {
+									self.alert.textContent = "You haven't been invited to any meeting";
+									return;
+								}
 
-							if (next) next();
+								// empty any error and create the table
+								self.alert.textContent = "";
+								let meetTable = document.createElement("table");
+								self.update(meetingsToShow, meetTable); // self visible by closure
 
-						} else if (req.status == 403) {
-							window.sessionStorage.removeItem("username");
-						}
-						else {
-							self.alert.textContent = message;
+								if (next) next();
+
+								break;
+
+							case 403:
+								window.sessionStorage.removeItem("username");
+								break;
+
+							default:
+								self.alert.textContent = message;
+								break;
+
 						}
 					}
 				}
 			);
 		};
 
+		// function to fill the table given the meeting to show
 		this.update = function(_meetingsToShow, _meetTable) {
 			this.meetingsToShow = _meetingsToShow;
 			this.meetTable = _meetTable;
@@ -162,6 +185,7 @@
 
 			this.place.innerHTML = "";
 
+			// create the table head
 			for (var i = 0; i < tabFields.length; i++) {
 				th = document.createElement("th"); 				//column
 				text = document.createTextNode(tabFields[i]); 	//column title
@@ -170,7 +194,7 @@
 			}
 			this.meetTable.appendChild(tr);
 
-
+			// create each row of the table filling it with the given meeting data
 			this.meetingsToShow.forEach(function(meet) {		// 'this' is not visible here, 'self' is
 				tr = document.createElement("tr");
 
@@ -207,7 +231,8 @@
 	var sUsers;
 	var attempt;
 	var toDeselect;
-	
+
+	// get from the database all the registered users
 	function RegisteredUsers(_alert, _place, _form) {
 		this.alert = _alert;
 		this.place = _place;
@@ -218,42 +243,54 @@
 		};
 
 		this.show = function(next) {
-
 			const self = this;
+
 			if (this.form.checkValidity()) {
+				//call servlet
 				makeCall("POST", "GoToRecordsPage", this.form,
 					function(req) {
 						if (req.readyState == 4) {
 							let message = req.responseText;
-							if (req.status == 200) {
-								rUsers = JSON.parse(req.responseText);
-								sUsers = [];
-								attempt = 1;
-								toDeselect = 0;
+							switch (req.status) {
+								case 200:
+									rUsers = JSON.parse(req.responseText);
+									sUsers = [];
+									attempt = 1;
+									toDeselect = 0;
 
-								sessionStorage.setItem("attempt", attempt);
+									sessionStorage.setItem("attempt", attempt);
 
-								if (rUsers == null || rUsers.length == 0) {
-									self.alert.textContent = "Your contact list is empty";
-									return;
-								}
+									if (rUsers == null || rUsers.length == 0) {
+										// this will never happen because you will always see yourself
+										self.alert.textContent = "Your contact list is empty";
+										return;
+									}
 
-								let usersTable = document.createElement("table");
-								self.update(rUsers, sUsers, attempt, toDeselect, usersTable); // self visible by closure
+									// create the table
+									let usersTable = document.createElement("table");
+									self.update(rUsers, sUsers, attempt, toDeselect, usersTable); // self visible by closure
 
-								modal_container.classList.add("show");
+									modal_container.classList.add("show");
 
-								if (next) next();
+									if (next) next();
 
-							} else if (req.status == 400) {
-								document.getElementById("genericMeetingError").textContent = message;
-							} else if (req.status == 401) {
-								window.location.href = "index.html";
-							} else if (req.status == 403) {
-								window.sessionStorage.removeItem("username");
-							}
-							else {
-								self.alert.textContent = message;
+									break;
+
+								case 400:
+									document.getElementById("genericMeetingError").textContent = message;
+									break;
+
+								case 401:
+									window.location.href = "index.html";
+									break;
+
+								case 403:
+									window.sessionStorage.removeItem("username");
+									break;
+
+								default:
+									self.alert.textContent = message;
+									break;
 							}
 						}
 					}, false);
@@ -262,6 +299,7 @@
 			}
 		};
 
+		// function to fill the table given the meeting to show
 		this.update = function(_rUsers, _sUsers, _attempt, _toDeselect, _usersTable) {
 			this.usersTable = _usersTable;
 			this.rUsers = _rUsers;
@@ -278,6 +316,7 @@
 
 			this.place.innerHTML = "";
 
+			// create the table head
 			for (var i = 0; i < tabFields.length; i++) {
 				th = document.createElement("th"); 				//column
 				text = document.createTextNode(tabFields[i]); 	//column title
@@ -286,6 +325,7 @@
 			}
 			this.usersTable.appendChild(tr);
 
+			// create each row of the table filling it with the given meeting data
 			this.rUsers.forEach(function(user) {		// 'this' is not visible here, 'self' is
 				tr = document.createElement("tr");
 
@@ -320,6 +360,7 @@
 		}
 	}
 
+	//set dynamically the "min" attribute of the html date to _today_
 	function setMinDate(_place) {
 		this.place = _place;
 
@@ -327,13 +368,11 @@
 		var dd = today.getDate();
 		var mm = today.getMonth() + 1; //January is 0
 		var yyyy = today.getFullYear();
-		if (dd < 10) {
+		if (dd < 10)
 			dd = '0' + dd
-		}
 
-		if (mm < 10) {
+		if (mm < 10)
 			mm = '0' + mm
-		}
 
 		today = yyyy + '-' + mm + '-' + dd;
 		this.place.setAttribute("min", today);
@@ -344,9 +383,10 @@
 	const cancelButton = document.getElementById("cancelButton");
 	const submitButton = document.getElementById("createMeetingButton");
 	const modal_container = document.getElementById("modal-container");
-	
+
 	var registeredUsers;
-	
+
+	// manage the click on the submit button
 	submitButton.addEventListener('click', (e) => {
 		e.preventDefault();
 		var form = e.target.closest("form");
@@ -359,91 +399,96 @@
 
 	});
 
+	// manage the click on the invite button
 	inviteButton.addEventListener('click', (e) => {
 		e.preventDefault();
-			var form = e.target.closest("form");
-			if (form.checkValidity()) {
-				makeCall("POST", "InviteToMeeting", e.target.closest("form"), function(req) {
-					if (req.readyState == XMLHttpRequest.DONE) {
-						var message = req.responseText;
-						switch (req.status) {
-							case 200:
-								backToHomepage();
-								createdMeeting.show();
-								invitedMeeting.show();
-								break;
-								
-							case 202:
-								sUsers = JSON.parse(req.responseText);
-								
-								attempt = sessionStorage.getItem("attempt");
-								attempt++;
-								var maxPart = document.getElementById("maxPart").value;
-								
-								if (sUsers.length != 0) {
-									toDeselect = sUsers.length - maxPart;
-								}
-								
-								sessionStorage.setItem("attempt", attempt);
-								
-								if (attempt == 2 && sUsers.length != 0) {
-									document.getElementById("errorUsersArea").textContent =
+		var form = e.target.closest("form");
+		if (form.checkValidity()) {
+
+			// call the servlet
+			makeCall("POST", "InviteToMeeting", e.target.closest("form"), function(req) {
+				if (req.readyState == XMLHttpRequest.DONE) {
+					var message = req.responseText;
+					switch (req.status) {
+						case 200:	// all data is correct
+							backToHomepage();
+							createdMeeting.show();
+							invitedMeeting.show();
+							break;
+
+						case 202:	// data is not correct but the user has other attempts
+							sUsers = JSON.parse(req.responseText);
+
+							attempt = sessionStorage.getItem("attempt");
+							attempt++;
+							var maxPart = document.getElementById("maxPart").value;
+
+							if (sUsers.length != 0) {
+								toDeselect = sUsers.length - maxPart;
+							}
+
+							sessionStorage.setItem("attempt", attempt);
+
+							if (attempt == 2 && sUsers.length != 0) {
+								document.getElementById("errorUsersArea").textContent =
 									("This is your attempt number " + attempt + ". You need to de-select " + toDeselect + " user(s)");
-								
-								} else if (attempt == 2){
-									document.getElementById("errorUsersArea").textContent =	("This is your attempt number " + attempt);
-								
-								} else if (attempt == 3 && sUsers.length != 0) {
-									document.getElementById("errorUsersArea").textContent =
-										("This is your attempt number " + attempt +
-										 ". You need to de-select " + toDeselect + " user(s)" +
-										 ". Be careful because this is the last one!");
-								
-								} else if (attempt == 3) {
-									document.getElementById("errorUsersArea").textContent =
-										("This is your attempt number " + attempt +
-										 ". Be careful because this is the last one!");
-								}
-										 
-								registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
-								break;
-								
-							case 400: // bad request
-								alert("Too many attempts to create a meeting with the wrong number of participants! " +
-									  "It won't be created. You will be redirected to the Homepage");
-								backToHomepage();
-								break;
-								
-							case 502: // server error
-								alert(message);
-								break;
-						}
+
+							} else if (attempt == 2) {
+								document.getElementById("errorUsersArea").textContent = ("This is your attempt number " + attempt);
+
+							} else if (attempt == 3 && sUsers.length != 0) {
+								document.getElementById("errorUsersArea").textContent =
+									("This is your attempt number " + attempt +
+										". You need to de-select " + toDeselect + " user(s)" +
+										". Be careful because this is the last one!");
+
+							} else if (attempt == 3) {
+								document.getElementById("errorUsersArea").textContent =
+									("This is your attempt number " + attempt +
+										". Be careful because this is the last one!");
+							}
+
+							registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
+							break;
+
+						case 400:	// bad request (too many attempts)
+							alert("Too many attempts to create a meeting with the wrong number of participants! " +
+								  "It won't be created. You will be redirected to the Homepage");
+							backToHomepage();
+							break;
+
+						case 502:	// server error
+							alert(message);
+							break;
 					}
-				}, false);
-			} else {
-				form.reportValidity();
-			}
+				}
+			}, false);
+		} else {
+			form.reportValidity();
+		}
 	});
-	
+
+	// manage the click on the cancel button to return on the homepage without reloading
 	cancelButton.addEventListener('click', (e) => {
 		e.preventDefault();
 		backToHomepage();
 	});
-	
+
+	// function to go back to homepage and empty all the errors and input fields
 	function backToHomepage() {
 		attempt = 0;
 		document.getElementById("errorUsersArea").textContent = "";
 		sessionStorage.removeItem("attempt");
-		
+
 		let inputs = document.querySelectorAll("input");
 		inputs.forEach((input) => (input.value = ""));
-		
+
 		modal_container.classList.remove("show");
 	}
 
 	var createdMeeting;
 	var invitedMeeting;
-	
+
 	function PageOrchestrator() {
 
 		this.start = function() {
@@ -470,15 +515,15 @@
 				document.getElementById("invitedMeetingArea")
 			);
 			invitedMeeting.show();
-			
+
 		};
 
 		this.refresh = function() {
 			document.getElementById("genericMeetingError").textContent = "";
 			createdMeeting.reset();
 			invitedMeeting.reset();
-
 		};
+
 	}
 
 })();

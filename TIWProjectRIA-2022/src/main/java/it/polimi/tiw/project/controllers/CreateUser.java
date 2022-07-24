@@ -68,7 +68,7 @@ public class CreateUser extends HttpServlet {
 		UserForm userF = new UserForm(email, username, password, password2, name, surname, age, city);
 
 		if (userF.isValid()) {
-			if (this.checkUsername(username)) {
+			if (checkUsername(username)) {
 				try {
 					//the form is valid and the username is available
 					UserDAO uDAO = new UserDAO(connection);

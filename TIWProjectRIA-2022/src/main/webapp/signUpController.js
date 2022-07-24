@@ -1,6 +1,7 @@
 /**
  * Subscription management
  */
+ 
 (function() {
 	document.getElementById("subscribeButton").addEventListener("click", (e) => {
 		e.preventDefault();
@@ -10,7 +11,7 @@
 				if (x.readyState == XMLHttpRequest.DONE) {
 					var message = x.responseText;
 					switch (x.status) {
-						case 200:
+						case 200: // registration successful
 							sessionStorage.setItem("regSuccessful", "REGISTRATION SUCCESSFUL! You can now log in");
 							window.location.href = "index.html";
 							break;

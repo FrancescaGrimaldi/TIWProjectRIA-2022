@@ -57,9 +57,10 @@ public class GoToRecordsPage extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// If the user is not logged in (not present in session) redirect to the login
+		
 		HttpSession session = request.getSession();
 		
+		//send status code 401 if the user is not logged in
 		if (session.isNew() || session.getAttribute("user") == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println("Incorrect param values");
@@ -84,7 +85,6 @@ public class GoToRecordsPage extends HttpServlet {
 		
 		MeetingForm meetF = new MeetingForm(title, startDate, startTime, duration, maxPart);
 		
-		//the first half is done
 		if (meetF.isValid()) {
 			//meeting creation can proceed selecting participants
 			session.setAttribute("attempt", 1);
