@@ -144,13 +144,13 @@ input[type='checkbox'] {
 	transform: scale(1.03);
 }
 
-.loginButton:active {
-	background-color: #2E2924;
-}
-
 .cancel-button:active {
 	background-color: #2E2924;
 	transform: scale(0.97);
+}
+
+.loginButton:active {
+	background-color: #2E2924;
 }
 
 .modal-container {
@@ -165,24 +165,22 @@ input[type='checkbox'] {
 	display: flex;
 	opacity: 0;
 	pointer-events: none;
-	transform: scale(0);
 	transition: 200ms ease-in-out;
 }
 
 .modal-container.show {
 	opacity: 1;
 	pointer-events: auto;
-	transform: scale(1);
 }
 
 .modal {
 	position: fixed;
-	background-color: #e8e3e8;
+	background-color: #E8E3E8;
 	box-shadow: 3px 3px 5px 5px #474747;
 	padding: 20px 30px;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%) scale(1);
+	transform: translate(-50%, -50%);
 	transition: 200ms ease-in-out;
 	width: 60%;
 	max-width: 80%;
