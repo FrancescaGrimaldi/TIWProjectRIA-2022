@@ -113,7 +113,6 @@ public class GoToRecordsPage extends HttpServlet {
 		} else {
 			//display the format errors
 			String genErrors = meetF.getErrors();
-			System.out.println(genErrors);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().write(genErrors);
 			return;
