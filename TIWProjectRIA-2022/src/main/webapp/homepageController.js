@@ -340,7 +340,6 @@
 				td1.value = user.username;
 				td1.checked = self.sUsers != null && self.sUsers.includes(user.username);
 
-
 				td2.textContent = user.username;
 				td3.textContent = user.email;
 				td4.textContent = user.name;
