@@ -375,27 +375,41 @@
 								
 							case 202:
 								sUsers = JSON.parse(req.responseText);
+								
 								attempt = sessionStorage.getItem("attempt");
 								attempt++;
 								var maxPart = document.getElementById("maxPart").value;
-								toDeselect = sUsers.length - maxPart;
+								
+								if (sUsers.length != 0) {
+									toDeselect = sUsers.length - maxPart;
+								}
 								
 								sessionStorage.setItem("attempt", attempt);
 								
-								if (attempt == 2) 
+								if (attempt == 2 && sUsers.length != 0) {
 									document.getElementById("errorUsersArea").textContent =
 									("This is your attempt number " + attempt + ". You need to de-select " + toDeselect + " user(s)");
-								if (attempt == 3)
+								
+								} else if (attempt == 2){
+									document.getElementById("errorUsersArea").textContent =	("This is your attempt number " + attempt);
+								
+								} else if (attempt == 3 && sUsers.length != 0) {
 									document.getElementById("errorUsersArea").textContent =
 										("This is your attempt number " + attempt +
 										 ". You need to de-select " + toDeselect + " user(s)" +
 										 ". Be careful because this is the last one!");
+								
+								} else if (attempt == 3) {
+									document.getElementById("errorUsersArea").textContent =
+										("This is your attempt number " + attempt +
+										 ". Be careful because this is the last one!");
+								}
 										 
 								registeredUsers.update(rUsers, sUsers, attempt, toDeselect, usersTable);
 								break;
 								
 							case 400: // bad request
-								alert("Too many attempts have been done trying to create a meeting with too many participants! " +
+								alert("Too many attempts to create a meeting with the wrong number of participants! " +
 									  "It won't be created. You will be redirected to the Homepage");
 								backToHomepage();
 								break;
