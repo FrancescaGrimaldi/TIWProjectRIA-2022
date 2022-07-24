@@ -32,12 +32,19 @@
         }
     });
 
-    //shows a message stating that the registration on the website was successful
+    
 	window.onload = () => {
+		//shows a message stating that the registration on the website was successful
 		var reg = sessionStorage.getItem("regSuccessful");
 		if (reg != null) {
 			sessionStorage.removeItem("regSuccessful");
 			document.getElementById("registration").textContent = reg;
+		}
+		
+		//loads homepage if user is already logged in
+		var usrn = sessionStorage.getItem("username");
+		if (usrn != null) {
+			window.location.href = "Homepage.html";	
 		}
 	}
 

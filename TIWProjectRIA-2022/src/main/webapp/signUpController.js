@@ -58,6 +58,14 @@
 		}
 	})
 
+	//loads homepage if user is already logged in
+	window.onload = () => {
+		var usrn = sessionStorage.getItem("username");
+		if (usrn != null) {
+			window.location.href = "Homepage.html";	
+		}
+	}
+
 })();
 
     
